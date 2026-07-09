@@ -1,0 +1,3379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>라이프리듬</title>
+  <style>
+    :root {
+      --teal-900: #134e4a;
+      --teal-800: #115e59;
+      --teal-700: #0f766e;
+      --teal-600: #0d9488;
+      --teal-500: #14b8a6;
+      --teal-300: #5eead4;
+      --teal-100: #ccfbf1;
+      --teal-50: #f0fdfa;
+      --orange-500: #f97316;
+      --orange-100: #ffedd5;
+      --orange-50: #fff7ed;
+      --warn-600: #be3c28;
+      --warn-700: #9a3324;
+      --warn-100: #f8d9d2;
+      --warn-50: #fdf1ee;
+      --warn-border: #eab3a5;
+      --slate-900: #0f172a;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+      --shadow: 0 18px 48px rgba(15, 23, 42, 0.11);
+      --soft-shadow: 0 10px 28px rgba(15, 118, 110, 0.1);
+      --radius: 8px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 18% -8%, rgba(94, 234, 212, 0.32), transparent 30%),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 48%, #eefcf9 100%);
+      color: var(--slate-900);
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    button {
+      border: 0;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: default;
+    }
+
+    input {
+      font: inherit;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      border-bottom: 1px solid rgba(20, 184, 166, 0.16);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 14px 0;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      background: transparent;
+      color: var(--teal-900);
+      text-align: left;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--teal-300), var(--teal-500));
+      box-shadow: 0 8px 20px rgba(20, 184, 166, 0.24);
+      color: var(--teal-900);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .brand-name {
+      display: block;
+      font-size: 21px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .brand-sub {
+      display: block;
+      margin-top: 3px;
+      color: var(--slate-500);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .travel-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 12px;
+      background: var(--teal-50);
+      color: var(--teal-800);
+      font-size: 12px;
+      font-weight: 900;
+      border: 1px solid rgba(20, 184, 166, 0.3);
+    }
+
+    .travel-badge.is-visible {
+      display: inline-flex;
+    }
+
+    .tabs {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px;
+      border: 1px solid rgba(20, 184, 166, 0.18);
+      border-radius: 999px;
+      background: var(--white);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    .tab-button {
+      min-width: 66px;
+      border-radius: 999px;
+      padding: 9px 13px;
+      background: transparent;
+      color: var(--slate-500);
+      font-size: 13px;
+      font-weight: 800;
+      transition: background 180ms ease, color 180ms ease;
+    }
+
+    .tab-button.is-active {
+      background: var(--teal-700);
+      color: var(--white);
+    }
+
+    .command-bar {
+      border-bottom: 1px solid rgba(20, 184, 166, 0.14);
+      background: rgba(240, 253, 250, 0.6);
+    }
+
+    .command-bar-inner {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 12px 0;
+    }
+
+    .command-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .command-icon {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      color: var(--teal-700);
+    }
+
+    .command-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .command-input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      padding: 0 14px;
+      background: var(--white);
+      color: var(--slate-900);
+      font-size: 14px;
+    }
+
+    .command-input:focus {
+      outline: 2px solid rgba(20, 184, 166, 0.35);
+      outline-offset: 1px;
+    }
+
+    .command-submit {
+      border-radius: 10px;
+      padding: 0 16px;
+      background: var(--teal-700);
+      color: var(--white);
+      font-weight: 900;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .command-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .suggestion-chip {
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--white);
+      color: var(--teal-700);
+      border: 1px solid rgba(20, 184, 166, 0.28);
+    }
+
+    .command-response {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--white);
+      border: 1px solid rgba(20, 184, 166, 0.24);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--teal-800);
+    }
+
+    .companion-launch-row {
+      margin-top: 10px;
+    }
+
+    .companion-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 900;
+      background: var(--teal-700);
+      color: var(--white);
+      box-shadow: 0 8px 20px rgba(15, 118, 110, 0.22);
+    }
+
+    .companion-button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .companion-modal-inner {
+      width: min(420px, 100%);
+      max-height: 92vh;
+      overflow-y: auto;
+      border-radius: 16px;
+      background: var(--white);
+      padding: 20px;
+      box-shadow: 0 30px 70px rgba(15, 23, 42, 0.32);
+    }
+
+    .companion-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .companion-stage {
+      position: relative;
+      border-radius: 16px;
+      background: linear-gradient(160deg, var(--teal-800), var(--teal-600));
+      padding: 30px 16px;
+      text-align: center;
+      color: var(--white);
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .companion-avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      transition: transform 200ms ease, box-shadow 200ms ease;
+    }
+
+    .companion-avatar svg {
+      width: 46px;
+      height: 46px;
+      color: var(--white);
+    }
+
+    .companion-avatar.is-talking {
+      animation: companionTalk 900ms ease-in-out infinite;
+    }
+
+    @keyframes companionTalk {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.25);
+      }
+      50% {
+        transform: scale(1.06);
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+      }
+    }
+
+    .companion-caption {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.6;
+      max-width: 320px;
+    }
+
+    .companion-self-video {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      width: 78px;
+      height: 104px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      background: rgba(0, 0, 0, 0.3);
+      transform: scaleX(-1);
+    }
+
+    .companion-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .companion-mic-button {
+      flex-shrink: 0;
+      border-radius: 999px;
+      padding: 0 16px;
+      min-height: 42px;
+      font-size: 13px;
+      font-weight: 900;
+      background: var(--teal-700);
+      color: var(--white);
+    }
+
+    .companion-mic-button.is-listening {
+      background: var(--warn-600);
+      animation: companionTalk 900ms ease-in-out infinite;
+    }
+
+    .companion-text-row {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .command-response.is-visible {
+      display: block;
+    }
+
+    .demo-progress {
+      position: sticky;
+      top: 69px;
+      z-index: 40;
+      display: none;
+      justify-content: center;
+      padding: 8px 12px 0;
+      pointer-events: none;
+    }
+
+    .demo-progress.is-visible {
+      display: flex;
+    }
+
+    .progress-track {
+      display: flex;
+      gap: 6px;
+      max-width: calc(100vw - 24px);
+      padding: 7px;
+      overflow-x: auto;
+      border: 1px solid rgba(20, 184, 166, 0.16);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .progress-step {
+      white-space: nowrap;
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: #78908c;
+      font-size: 12px;
+      font-weight: 800;
+      transition: background 220ms ease, color 220ms ease, transform 220ms ease;
+    }
+
+    .progress-step.is-active {
+      background: var(--teal-100);
+      color: var(--teal-800);
+      transform: translateY(-1px);
+    }
+
+    main {
+      width: min(1040px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 52px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.is-active {
+      display: block;
+      animation: viewFadeIn 320ms ease;
+    }
+
+    @keyframes viewFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-row {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.78fr) minmax(300px, 1.22fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .persona-switch {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .persona-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1.5px solid var(--slate-200);
+      background: var(--white);
+      color: var(--slate-600);
+    }
+
+    .persona-chip.is-active {
+      border-color: var(--teal-500);
+      background: var(--teal-50);
+      color: var(--teal-800);
+    }
+
+    .persona-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+
+    .persona-dot--normal {
+      background: var(--teal-500);
+    }
+
+    .persona-dot--caution {
+      background: var(--orange-500);
+    }
+
+    .persona-dot--warn {
+      background: var(--warn-600);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .status-pill .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+    }
+
+    .status-pill--normal {
+      background: var(--teal-50);
+      color: var(--teal-800);
+      border: 1px solid rgba(20, 184, 166, 0.3);
+    }
+
+    .status-pill--normal .status-dot {
+      background: var(--teal-500);
+    }
+
+    .status-pill--caution {
+      background: var(--orange-50);
+      color: #9a3412;
+      border: 1px solid rgba(249, 115, 22, 0.4);
+    }
+
+    .status-pill--caution .status-dot {
+      background: var(--orange-500);
+    }
+
+    .status-pill--warn {
+      background: var(--warn-50);
+      color: var(--warn-700);
+      border: 1px solid var(--warn-border);
+    }
+
+    .status-pill--warn .status-dot {
+      background: var(--warn-600);
+    }
+
+    .call-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      border-radius: var(--radius);
+      padding: 0 18px;
+      font-size: 14px;
+      font-weight: 900;
+      background: var(--warn-600);
+      color: var(--white);
+      box-shadow: 0 10px 24px rgba(190, 60, 40, 0.22);
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .call-button:disabled {
+      background: var(--warn-border);
+      box-shadow: none;
+    }
+
+    .exercise-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+      list-style: none;
+      padding: 0;
+    }
+
+    .exercise-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius);
+      background: var(--slate-50);
+      padding: 12px 14px;
+    }
+
+    .exercise-info {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--slate-700);
+    }
+
+    .exercise-info strong {
+      color: var(--slate-900);
+      font-weight: 900;
+    }
+
+    .exercise-camera-button {
+      flex-shrink: 0;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      background: var(--white);
+      color: var(--teal-700);
+      border: 1px solid rgba(20, 184, 166, 0.3);
+    }
+
+    .camera-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(15, 23, 42, 0.5);
+    }
+
+    .camera-modal.is-visible {
+      display: flex;
+    }
+
+    .camera-modal-inner {
+      width: min(420px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 16px;
+      background: var(--white);
+      padding: 20px;
+      box-shadow: 0 30px 70px rgba(15, 23, 42, 0.32);
+    }
+
+    .camera-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .camera-close-button {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: var(--slate-100);
+      color: var(--slate-600);
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .camera-exercise-tabs {
+      display: flex;
+      gap: 6px;
+      padding: 4px;
+      border-radius: 999px;
+      background: var(--slate-100);
+      margin-bottom: 14px;
+    }
+
+    .camera-exercise-tab {
+      flex: 1;
+      border-radius: 999px;
+      padding: 7px 8px;
+      font-size: 11px;
+      font-weight: 800;
+      background: transparent;
+      color: var(--slate-500);
+    }
+
+    .camera-exercise-tab.is-active {
+      background: var(--white);
+      color: var(--teal-800);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    }
+
+    .camera-video-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--slate-900);
+    }
+
+    .camera-video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+
+    .camera-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      background: rgba(15, 23, 42, 0.55);
+    }
+
+    .camera-feedback {
+      min-height: 20px;
+      margin-top: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--teal-700);
+    }
+
+    .camera-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .camera-note {
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--slate-400);
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .card {
+      border: 1px solid rgba(20, 184, 166, 0.16);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: var(--shadow);
+    }
+
+    .card-pad {
+      padding: 22px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .eyebrow {
+      margin-bottom: 6px;
+      color: var(--teal-700);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .title {
+      color: var(--slate-900);
+      font-size: 21px;
+      font-weight: 900;
+      line-height: 1.28;
+    }
+
+    .muted {
+      color: var(--slate-500);
+      font-size: 14px;
+    }
+
+    .score-wrap {
+      display: grid;
+      place-items: center;
+      padding: 18px 0 10px;
+    }
+
+    .score-ring {
+      width: min(210px, 72vw);
+      height: min(210px, 72vw);
+    }
+
+    .score-bg,
+    .score-value {
+      fill: none;
+      stroke-width: 14;
+    }
+
+    .score-bg {
+      stroke: var(--slate-200);
+    }
+
+    .score-value {
+      stroke: var(--teal-500);
+      stroke-linecap: round;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      transition: stroke 240ms ease;
+    }
+
+    .score-number {
+      fill: var(--slate-900);
+      font-size: 42px;
+      font-weight: 900;
+    }
+
+    .score-label {
+      fill: var(--slate-500);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .indicator-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .indicator-item {
+      min-height: 84px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius);
+      background: var(--slate-50);
+      padding: 13px;
+    }
+
+    .indicator-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      color: var(--slate-500);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .indicator-label svg {
+      width: 14px;
+      height: 14px;
+      color: var(--teal-600);
+    }
+
+    .indicator-value {
+      color: var(--slate-900);
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.32;
+    }
+
+    .trend-block {
+      margin-top: 18px;
+    }
+
+    .trend-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--slate-500);
+    }
+
+    .trend-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 80px;
+    }
+
+    .trend-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .trend-bar {
+      width: 100%;
+      max-width: 22px;
+      border-radius: 6px 6px 2px 2px;
+      background: var(--teal-300);
+      transition: height 420ms var(--ease), background 220ms ease;
+    }
+
+    .trend-bar.is-today {
+      background: var(--teal-600);
+    }
+
+    .trend-label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--slate-400);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 6px;
+    }
+
+    .period-tabs {
+      display: inline-flex;
+      gap: 6px;
+      padding: 4px;
+      border-radius: 999px;
+      background: var(--slate-100);
+    }
+
+    .period-tab {
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      background: transparent;
+      color: var(--slate-500);
+    }
+
+    .period-tab.is-active {
+      background: var(--white);
+      color: var(--teal-800);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    }
+
+    .floorplan-svg-wrap {
+      margin-top: 14px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+      background: var(--white);
+      padding: 10px;
+    }
+
+    .floorplan-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .plan-wall {
+      fill: none;
+      stroke: #1e293b;
+      stroke-width: 5;
+      stroke-linejoin: round;
+    }
+
+    .plan-wall-inner {
+      fill: none;
+      stroke: #1e293b;
+      stroke-width: 2.5;
+    }
+
+    .plan-door {
+      fill: none;
+      stroke: #94a3b8;
+      stroke-width: 1.4;
+      stroke-dasharray: 3 2;
+    }
+
+    .plan-room-base {
+      fill: var(--slate-50);
+      stroke: #cbd5e1;
+      stroke-width: 1;
+    }
+
+    .plan-room-base-living {
+      fill: url(#woodPattern);
+      stroke: #cbd5e1;
+      stroke-width: 1;
+    }
+
+    .plan-status-overlay {
+      fill: var(--teal-500);
+      opacity: 0.22;
+      pointer-events: none;
+      transition: fill 220ms ease;
+    }
+
+    .plan-room-label {
+      font-size: 13px;
+      font-weight: 900;
+      fill: #0f172a;
+      text-anchor: middle;
+    }
+
+    .plan-room-pill-text {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-anchor: middle;
+      fill: var(--slate-600);
+      transition: fill 220ms ease;
+    }
+
+    .plan-room-group[data-status="normal"] .plan-status-overlay {
+      fill: var(--teal-500);
+    }
+
+    .plan-room-group[data-status="normal"] .plan-room-pill-text {
+      fill: var(--teal-800);
+    }
+
+    .plan-room-group[data-status="caution"] .plan-status-overlay {
+      fill: var(--orange-500);
+    }
+
+    .plan-room-group[data-status="caution"] .plan-room-pill-text {
+      fill: #9a3412;
+    }
+
+    .plan-room-group[data-status="warn"] .plan-status-overlay {
+      fill: var(--warn-600);
+    }
+
+    .plan-room-group[data-status="warn"] .plan-room-pill-text {
+      fill: var(--warn-700);
+    }
+
+    .floorplan-legend-list {
+      display: grid;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .floorplan-legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      background: var(--slate-50);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--slate-600);
+    }
+
+    .legend-room-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--teal-700);
+      flex-shrink: 0;
+    }
+
+    .legend-room-name {
+      flex-shrink: 0;
+      width: 42px;
+      font-weight: 900;
+      color: var(--slate-900);
+    }
+
+    .room-status {
+      color: var(--slate-500);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .notice-banner,
+    .coach-card,
+    .result-card {
+      opacity: 0;
+      transform: translateY(18px);
+      max-height: 0;
+      overflow: hidden;
+      padding-top: 0;
+      padding-bottom: 0;
+      margin-top: 0;
+      pointer-events: none;
+      transition:
+        opacity 440ms var(--ease),
+        transform 440ms var(--ease),
+        max-height 440ms var(--ease),
+        margin-top 440ms var(--ease),
+        padding-top 440ms var(--ease),
+        padding-bottom 440ms var(--ease);
+    }
+
+    .notice-banner.is-visible,
+    .coach-card.is-visible,
+    .result-card.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      max-height: 1200px;
+      padding-top: 22px;
+      padding-bottom: 22px;
+      margin-top: 16px;
+      pointer-events: auto;
+    }
+
+    .notice-banner {
+      border-color: rgba(249, 115, 22, 0.32);
+      background: linear-gradient(135deg, var(--orange-50), var(--white) 88%);
+    }
+
+    .coach-card {
+      border-color: rgba(20, 184, 166, 0.28);
+      background: linear-gradient(135deg, var(--teal-50), var(--white) 86%);
+    }
+
+    .reason-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .reason-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--slate-700);
+    }
+
+    .reason-mark {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: var(--teal-100);
+      color: var(--teal-800);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 900;
+      margin-top: 1px;
+    }
+
+    .info-box {
+      display: grid;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 9px;
+      border-bottom: 1px solid var(--slate-200);
+      color: var(--slate-600);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .info-row:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .info-row strong {
+      color: var(--slate-900);
+      text-align: right;
+    }
+
+    .self-tip {
+      margin-top: 14px;
+      border-radius: var(--radius);
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--slate-600);
+    }
+
+    .self-tip svg {
+      width: 18px;
+      height: 18px;
+      color: var(--teal-600);
+      flex-shrink: 0;
+    }
+
+    .coach-complete-note {
+      display: none;
+      margin-top: 14px;
+      border: 1px solid rgba(20, 184, 166, 0.24);
+      border-radius: var(--radius);
+      background: var(--teal-50);
+      padding: 14px;
+    }
+
+    .coach-complete-note.is-visible {
+      display: block;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .primary-button,
+    .secondary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      border-radius: var(--radius);
+      padding: 0 18px;
+      font-size: 14px;
+      font-weight: 900;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    .primary-button {
+      background: var(--teal-700);
+      color: var(--white);
+      box-shadow: 0 10px 24px rgba(15, 118, 110, 0.22);
+    }
+
+    .secondary-button {
+      border: 1px solid rgba(15, 118, 110, 0.24);
+      background: var(--white);
+      color: var(--teal-700);
+    }
+
+    .primary-button:disabled {
+      background: var(--teal-500);
+      box-shadow: none;
+    }
+
+    .join-pulse {
+      animation: joinPulse 1.9s ease-in-out infinite;
+    }
+
+    .pressing {
+      transform: scale(0.97);
+      box-shadow: 0 5px 14px rgba(15, 118, 110, 0.2);
+    }
+
+    @keyframes joinPulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 10px 24px rgba(15, 118, 110, 0.22);
+      }
+      50% {
+        transform: scale(1.025);
+        box-shadow: 0 15px 32px rgba(15, 118, 110, 0.28);
+      }
+    }
+
+    .result-card {
+      border-color: rgba(20, 184, 166, 0.32);
+      background: linear-gradient(135deg, #ecfeff, var(--white) 80%);
+    }
+
+    .result-list {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--slate-700);
+      font-weight: 800;
+    }
+
+    .check {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 auto;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--teal-100);
+      color: var(--teal-700);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .final-message {
+      margin-top: 16px;
+      border-radius: var(--radius);
+      background: var(--teal-800);
+      color: var(--white);
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 900;
+      line-height: 1.5;
+    }
+
+    .end-actions {
+      display: none;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .end-actions.is-visible {
+      display: flex;
+    }
+
+    .forecast-hero {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .forecast-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      background: var(--teal-50);
+      color: var(--teal-600);
+      transition: background 220ms ease, color 220ms ease;
+    }
+
+    .forecast-icon.is-cloudy {
+      background: var(--orange-50);
+      color: var(--orange-500);
+    }
+
+    .forecast-icon svg {
+      width: 34px;
+      height: 34px;
+    }
+
+    .forecast-score {
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--slate-900);
+    }
+
+    .forecast-text {
+      margin-top: 4px;
+      color: var(--slate-600);
+      font-size: 14px;
+      font-weight: 700;
+      max-width: 420px;
+    }
+
+    .forecast-strip {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .forecast-day {
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius);
+      background: var(--slate-50);
+      padding: 12px 6px;
+      text-align: center;
+    }
+
+    .forecast-day-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--slate-500);
+      margin-bottom: 8px;
+    }
+
+    .forecast-day-icon {
+      width: 28px;
+      height: 28px;
+      margin: 0 auto 6px;
+      color: var(--teal-600);
+    }
+
+    .forecast-day-icon.is-cloudy {
+      color: var(--orange-500);
+    }
+
+    .forecast-day-score {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--slate-900);
+    }
+
+    .meeting-card {
+      max-width: 720px;
+    }
+
+    .meeting-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--slate-200);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: var(--teal-50);
+      color: var(--teal-700);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .routine-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .routine-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--slate-600);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .routine-row strong {
+      color: var(--teal-700);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .complete-note {
+      display: none;
+      margin-top: 14px;
+      border: 1px solid rgba(20, 184, 166, 0.24);
+      border-radius: var(--radius);
+      background: var(--teal-50);
+      padding: 14px;
+    }
+
+    .complete-note.is-visible {
+      display: block;
+    }
+
+    .vote-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .vote-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius);
+      background: var(--white);
+      padding: 12px 14px;
+    }
+
+    .vote-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .vote-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--slate-900);
+    }
+
+    .vote-track {
+      margin-top: 6px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--slate-100);
+      overflow: hidden;
+    }
+
+    .vote-fill {
+      height: 100%;
+      background: var(--teal-500);
+      border-radius: inherit;
+      transition: width 320ms var(--ease);
+    }
+
+    .vote-count {
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--slate-400);
+    }
+
+    .vote-button {
+      flex-shrink: 0;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 900;
+      background: var(--teal-700);
+      color: var(--white);
+    }
+
+    .vote-button:disabled {
+      background: var(--slate-200);
+      color: var(--slate-500);
+    }
+
+    .vote-row.is-voted {
+      border-color: rgba(20, 184, 166, 0.4);
+      background: var(--teal-50);
+    }
+
+    .family-summary {
+      margin-top: 16px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(20, 184, 166, 0.24);
+      background: var(--teal-50);
+      padding: 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--teal-900);
+      line-height: 1.6;
+    }
+
+    .family-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      font-size: 12px;
+      color: var(--slate-500);
+      font-weight: 700;
+    }
+
+    .family-note svg {
+      width: 16px;
+      height: 16px;
+      color: var(--teal-600);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .family-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .family-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius);
+      background: var(--white);
+      padding: 12px 14px;
+    }
+
+    .family-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--teal-50);
+      display: grid;
+      place-items: center;
+      color: var(--teal-700);
+      flex-shrink: 0;
+    }
+
+    .family-avatar svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .family-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .family-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--slate-900);
+    }
+
+    .family-share-status {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--slate-500);
+      margin-top: 2px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      border-radius: 999px;
+      background: var(--slate-300);
+      flex-shrink: 0;
+      transition: background 200ms ease;
+    }
+
+    .toggle-switch .toggle-knob {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: var(--white);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
+      transition: transform 200ms ease;
+    }
+
+    .toggle-switch.is-on {
+      background: var(--teal-600);
+    }
+
+    .toggle-switch.is-on .toggle-knob {
+      transform: translateX(20px);
+    }
+
+    @media (max-width: 820px) {
+      .header-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .tabs {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .tab-button {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .demo-progress {
+        top: 118px;
+      }
+
+      .hero-row,
+      .indicator-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .indicator-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .forecast-strip {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .panel-head {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .vote-row {
+        flex-wrap: wrap;
+      }
+
+      .command-row {
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 120ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 100ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="header-inner">
+        <button class="brand" id="brandButton" type="button" aria-label="라이프리듬">
+          <span class="brand-mark">LR</span>
+          <span>
+            <span class="brand-name">라이프리듬</span>
+            <span class="brand-sub">순자 님의 생활 리듬 코치</span>
+          </span>
+        </button>
+        <span class="travel-badge" id="travelBadge">✈ 여행 모드 중</span>
+        <nav class="tabs" aria-label="주요 화면">
+          <button class="tab-button is-active" type="button" data-tab="home">오늘</button>
+          <button class="tab-button" type="button" data-tab="forecast">예보</button>
+          <button class="tab-button" type="button" data-tab="meeting">모임</button>
+          <button class="tab-button" type="button" data-tab="family">가족</button>
+        </nav>
+      </div>
+    </header>
+
+    <div class="command-bar">
+      <div class="command-bar-inner">
+        <div class="command-row">
+          <span class="command-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          </span>
+          <input class="command-input" id="commandInput" type="text" placeholder="예: 여행 모드 켜줘 / 딸한테 공유하지 마" aria-label="라이프리듬에게 말해보세요" />
+          <button class="command-submit" type="button" id="commandSubmit">보내기</button>
+        </div>
+        <div class="command-suggestions">
+          <button class="suggestion-chip" type="button" data-suggest="여행 모드 켜줘">여행 모드 켜줘</button>
+          <button class="suggestion-chip" type="button" data-suggest="딸한테 공유하지 마">딸한테 공유하지 마</button>
+          <button class="suggestion-chip" type="button" data-suggest="오늘 컨디션 어때">오늘 컨디션 어때</button>
+          <button class="suggestion-chip" type="button" data-suggest="운동 뭐하면 좋을까">운동 뭐하면 좋을까</button>
+          <button class="suggestion-chip" type="button" data-suggest="내일 예보 어때">내일 예보 어때</button>
+        </div>
+        <div class="command-response" id="commandResponse"></div>
+        <div class="companion-launch-row">
+          <button class="companion-button" type="button" id="openCompanionButton">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2"></rect></svg>
+            미소와 영상통화 하기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="camera-modal" id="companionModal">
+      <div class="companion-modal-inner">
+        <div class="companion-header">
+          <h3 class="title" style="font-size: 16px;">미소 · AI 말동무</h3>
+          <button class="camera-close-button" type="button" id="companionCloseButton">✕</button>
+        </div>
+        <div class="companion-stage">
+          <div class="companion-avatar" id="companionAvatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg>
+          </div>
+          <p class="companion-caption" id="companionCaption">안녕하세요, 순자 님! 오늘 기분은 어떠세요?</p>
+          <video class="companion-self-video" id="companionSelfVideo" autoplay playsinline muted></video>
+        </div>
+        <div class="companion-controls">
+          <button class="companion-mic-button" type="button" id="companionMicButton">🎤 말하기</button>
+          <div class="companion-text-row">
+            <input class="command-input" id="companionTextInput" type="text" placeholder="또는 여기에 입력해보세요" />
+            <button class="command-submit" type="button" id="companionSendButton">보내기</button>
+          </div>
+        </div>
+        <p class="camera-note" id="companionNote">이 대화는 실제 상담사가 아닌 라이프리듬 AI 말동무 데모예요. 음성 인식은 브라우저 지원 여부에 따라 다를 수 있어요.</p>
+      </div>
+    </div>
+
+    <div class="demo-progress" id="demoProgress" aria-label="데모 진행 상태">
+      <div class="progress-track">
+        <span class="progress-step" data-step="1">1단계 변화 감지</span>
+        <span class="progress-step" data-step="2">2단계 AI 추천</span>
+        <span class="progress-step" data-step="3">3단계 모임 신청</span>
+        <span class="progress-step" data-step="4">4단계 회복 확인</span>
+      </div>
+    </div>
+
+    <main>
+      <section class="view is-active" id="homeView" data-view="home">
+        <div class="persona-switch" id="personaSwitch">
+          <button class="persona-chip is-active" type="button" data-persona="soonja"><span class="persona-dot persona-dot--normal"></span>김순자</button>
+          <button class="persona-chip" type="button" data-persona="jeongja"><span class="persona-dot persona-dot--caution"></span>박정자</button>
+          <button class="persona-chip" type="button" data-persona="minho"><span class="persona-dot persona-dot--warn"></span>최민호</button>
+        </div>
+
+        <div id="soonjaHome">
+        <div class="hero-row">
+          <article class="card card-pad" id="scoreCard">
+            <div class="eyebrow">오늘의 생활 리듬</div>
+            <h1 class="title">리듬 점수</h1>
+            <div class="score-wrap">
+              <svg class="score-ring" viewBox="0 0 220 220" role="img" aria-label="오늘의 리듬 점수">
+                <circle class="score-bg" cx="110" cy="110" r="86"></circle>
+                <circle class="score-value" id="scoreCircle" cx="110" cy="110" r="86"></circle>
+                <text class="score-number" id="scoreText" x="110" y="106" text-anchor="middle">82</text>
+                <text class="score-label" x="110" y="134" text-anchor="middle">점</text>
+              </svg>
+            </div>
+            <p class="muted" id="scoreCaption">평소 생활 흐름이 안정적으로 유지되고 있어요.</p>
+
+            <div class="trend-block">
+              <div class="trend-title"><span>최근 7일 리듬</span></div>
+              <div class="trend-bars" id="trendBars">
+                <div class="trend-col"><div class="trend-bar" style="height: 79%;"></div><span class="trend-label">6일전</span></div>
+                <div class="trend-col"><div class="trend-bar" style="height: 81%;"></div><span class="trend-label">5일전</span></div>
+                <div class="trend-col"><div class="trend-bar" style="height: 80%;"></div><span class="trend-label">4일전</span></div>
+                <div class="trend-col"><div class="trend-bar" style="height: 78%;"></div><span class="trend-label">3일전</span></div>
+                <div class="trend-col"><div class="trend-bar" style="height: 75%;"></div><span class="trend-label">2일전</span></div>
+                <div class="trend-col"><div class="trend-bar" style="height: 73%;"></div><span class="trend-label">어제</span></div>
+                <div class="trend-col"><div class="trend-bar is-today" id="trendBarToday" style="height: 82%;"></div><span class="trend-label">오늘</span></div>
+              </div>
+            </div>
+          </article>
+
+          <div class="stack">
+            <article class="card card-pad">
+              <div class="eyebrow">오늘의 지표</div>
+              <h2 class="title">기상·주방·외출·취침을 함께 봐요.</h2>
+              <div class="indicator-grid">
+                <div class="indicator-item">
+                  <div class="indicator-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>기상</div>
+                  <div class="indicator-value" id="indWake">오전 6:50 기상</div>
+                </div>
+                <div class="indicator-item">
+                  <div class="indicator-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6v-3z"></path><path d="M2 10h2M20 10h2"></path><path d="M8 10V8a4 4 0 0 1 8 0v2"></path></svg>주방</div>
+                  <div class="indicator-value" id="indKitchen">아침 취사 완료</div>
+                </div>
+                <div class="indicator-item">
+                  <div class="indicator-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="1"></rect><circle cx="15" cy="12" r="1"></circle></svg>외출</div>
+                  <div class="indicator-value" id="indOuting">오늘 0회</div>
+                </div>
+                <div class="indicator-item">
+                  <div class="indicator-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"></path><path d="M3 14h18"></path></svg>취침</div>
+                  <div class="indicator-value" id="indSleep">야간 패턴 정상</div>
+                </div>
+              </div>
+            </article>
+
+            <article class="card card-pad" id="floorplanCard">
+              <div class="panel-head">
+                <div>
+                  <div class="eyebrow">우리 집 리듬 맵</div>
+                  <h2 class="title">시간대별로 어디가 활발했는지 봐요.</h2>
+                </div>
+                <div class="period-tabs" id="periodTabs">
+                  <button class="period-tab" type="button" data-period="morning">아침</button>
+                  <button class="period-tab" type="button" data-period="midday">낮</button>
+                  <button class="period-tab is-active" type="button" data-period="evening">저녁</button>
+                </div>
+              </div>
+              <div class="floorplan-svg-wrap">
+                <svg class="floorplan-svg" viewBox="0 0 400 300" role="img" aria-label="우리 집 평면도">
+                  <defs>
+                    <pattern id="woodPattern" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(6)">
+                      <rect width="16" height="16" fill="#ecdfc7"></rect>
+                      <line x1="0" y1="0" x2="0" y2="16" stroke="#dcc9a3" stroke-width="1"></line>
+                    </pattern>
+                  </defs>
+
+                  <g class="plan-room-group" id="roomEntranceTile" data-status="normal">
+                    <rect class="plan-room-base" x="8" y="8" width="90" height="70"></rect>
+                    <rect class="plan-status-overlay" x="8" y="8" width="90" height="70"></rect>
+                    <text class="plan-room-label" x="53" y="38">현관</text>
+                    <text class="plan-room-pill-text" id="roomEntrancePill" x="53" y="58">정상</text>
+                  </g>
+
+                  <g class="plan-room-group" id="roomKitchenTile" data-status="caution">
+                    <rect class="plan-room-base" x="98" y="8" width="140" height="70"></rect>
+                    <rect class="plan-status-overlay" x="98" y="8" width="140" height="70"></rect>
+                    <text class="plan-room-label" x="168" y="38">주방</text>
+                    <text class="plan-room-pill-text" id="roomKitchenPill" x="168" y="58">주의</text>
+                  </g>
+
+                  <g class="plan-room-group" id="roomBathroomTile" data-status="normal">
+                    <rect class="plan-room-base" x="238" y="8" width="154" height="70"></rect>
+                    <rect class="plan-status-overlay" x="238" y="8" width="154" height="70"></rect>
+                    <text class="plan-room-label" x="315" y="38">화장실</text>
+                    <text class="plan-room-pill-text" id="roomBathroomPill" x="315" y="58">정상</text>
+                  </g>
+
+                  <g class="plan-room-group" id="roomLivingTile" data-status="caution">
+                    <rect class="plan-room-base-living" x="8" y="78" width="194" height="214"></rect>
+                    <rect class="plan-status-overlay" x="8" y="78" width="194" height="214"></rect>
+                    <text class="plan-room-label" x="105" y="128">거실</text>
+                    <text class="plan-room-pill-text" id="roomLivingPill" x="105" y="148">주의</text>
+                  </g>
+
+                  <g class="plan-room-group" id="roomBedroomTile" data-status="normal">
+                    <rect class="plan-room-base" x="202" y="78" width="190" height="214"></rect>
+                    <rect class="plan-status-overlay" x="202" y="78" width="190" height="214"></rect>
+                    <text class="plan-room-label" x="297" y="128">안방</text>
+                    <text class="plan-room-pill-text" id="roomBedroomPill" x="297" y="148">정상</text>
+                  </g>
+
+                  <path class="plan-wall-inner" d="M98 8 V78 M238 8 V78 M8 78 H392 M202 78 V292"></path>
+                  <path class="plan-door" d="M40 78 A20 20 0 0 0 60 98"></path>
+                  <path class="plan-door" d="M150 78 A18 18 0 0 0 168 96"></path>
+                  <path class="plan-door" d="M300 78 A18 18 0 0 0 282 96"></path>
+                  <path class="plan-door" d="M202 170 A18 18 0 0 1 220 188"></path>
+
+                  <rect class="plan-wall" x="8" y="8" width="384" height="284"></rect>
+                </svg>
+
+                <div class="floorplan-legend-list">
+                  <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="1"></rect><circle cx="15" cy="12" r="1"></circle></svg><span class="legend-room-name">현관</span><span class="room-status" id="roomEntranceStatus">저녁 외출 없음, 평소 범위</span></div>
+                  <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="6" rx="1.5"></rect><path d="M4 16v3M20 16v3"></path><path d="M6 10V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v3"></path></svg><span class="legend-room-name">거실</span><span class="room-status" id="roomLivingStatus">TV 시청 시간 감소</span></div>
+                  <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h8a1 1 0 0 1 1 1v3H6V5a1 1 0 0 1 1-1Z"></path><path d="M6 8h10v2a5 5 0 0 1-5 5a5 5 0 0 1-5-5V8Z"></path><path d="M9 20h4"></path></svg><span class="legend-room-name">화장실</span><span class="room-status" id="roomBathroomStatus">이용 확인</span></div>
+                  <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6v-3z"></path><path d="M2 10h2M20 10h2"></path><path d="M8 10V8a4 4 0 0 1 8 0v2"></path></svg><span class="legend-room-name">주방</span><span class="room-status" id="roomKitchenStatus">저녁 취사 미확인</span></div>
+                  <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"></path><path d="M3 14h18"></path><path d="M6 12V9a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3"></path><path d="M14 12V9a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3"></path><path d="M3 18v2M21 18v2"></path></svg><span class="legend-room-name">안방</span><span class="room-status" id="roomBedroomStatus">휴식 중</span></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="card card-pad notice-banner" id="changeBanner">
+              <div class="eyebrow">생활 리듬 변화 감지</div>
+              <h2 class="title">최근 3일간 저녁 생활 리듬이 평소보다 줄고 있어요.</h2>
+              <p class="muted" style="margin-top: 8px;">하루의 변화가 아니라 며칠간 이어진 흐름을 확인했어요.</p>
+            </article>
+
+            <article class="card card-pad coach-card" id="coachCard">
+              <div class="eyebrow">AI 추천</div>
+              <h2 class="title">가벼운 산책은 어떠세요?</h2>
+              <ul class="reason-list">
+                <li class="reason-item"><span class="reason-mark">1</span><span>사흘째 저녁 활동이 평소보다 줄었어요</span></li>
+                <li class="reason-item"><span class="reason-mark">2</span><span>최근 말씀하신 무릎 상태를 함께 고려했어요</span></li>
+                <li class="reason-item"><span class="reason-mark">3</span><span>내일은 선선하고 산책하기 좋은 날씨예요</span></li>
+              </ul>
+              <div class="self-tip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"></circle><ellipse cx="15" cy="15" rx="3" ry="4"></ellipse></svg>
+                우선 오늘 저녁 15분만 가볍게 걸어보시는 것도 좋아요.
+              </div>
+              <div class="info-box">
+                <div class="info-row"><span>추천 모임</span><strong>함덕 파크골프 초보 모임</strong></div>
+                <div class="info-row"><span>시간</span><strong>내일 오후 2시</strong></div>
+                <div class="info-row"><span>거리</span><strong>집에서 약 12분 거리</strong></div>
+                <div class="info-row"><span>참여 인원</span><strong id="coachParticipants">현재 8명 참여</strong></div>
+              </div>
+              <div class="coach-complete-note" id="coachCompleteNote">
+                <strong style="color: var(--teal-800); font-weight: 900;">신청이 완료됐어요.</strong>
+                <p class="muted" style="margin-top: 6px;">모임 당일 오전 9시에 다시 알려드릴게요.</p>
+              </div>
+              <div class="action-row">
+                <button class="primary-button" type="button" id="joinButton">참여하기</button>
+              </div>
+            </article>
+
+            <article class="card card-pad">
+              <div class="eyebrow">오늘의 운동 추천</div>
+              <h2 class="title">가볍게 몸을 풀어봐요.</h2>
+              <ul class="exercise-list">
+                <li class="exercise-row"><span class="exercise-info"><strong>의자 스쿼트</strong> 10회 · 허벅지와 무릎 근력을 지켜줘요</span><button class="exercise-camera-button" type="button" data-open-camera="squat">카메라로 자세 확인</button></li>
+                <li class="exercise-row"><span class="exercise-info"><strong>목·어깨 스트레칭</strong> 5분 · 앉은 자리에서 천천히 돌려주세요</span><button class="exercise-camera-button" type="button" data-open-camera="stretch">카메라로 자세 확인</button></li>
+                <li class="exercise-row"><span class="exercise-info"><strong>제자리 걷기</strong> 3분 · TV를 보면서도 가볍게 할 수 있어요</span><button class="exercise-camera-button" type="button" data-open-camera="walk">카메라로 자세 확인</button></li>
+              </ul>
+              <p class="camera-note">카메라 화면은 이 기기 밖으로 전송되지 않아요. 자세 확인이 끝나면 바로 꺼드려요.</p>
+            </article>
+
+            <article class="card card-pad result-card" id="resultCard">
+              <div class="eyebrow">추천 이후 회복 확인</div>
+              <h2 class="title">추천 이후 생활 리듬이 다시 회복되고 있어요.</h2>
+              <div class="result-list">
+                <div class="result-item"><span class="check">✓</span><span>외출 시간이 평소 범위로 돌아왔어요</span></div>
+                <div class="result-item"><span class="check">✓</span><span>저녁 활동 시간이 45분 늘었어요</span></div>
+                <div class="result-item"><span class="check">✓</span><span>생활 리듬 점수가 8점 회복됐어요</span></div>
+              </div>
+              <div class="final-message">라이프리듬은 추천하고 끝나지 않습니다. 실제 생활의 변화를 다시 확인합니다.</div>
+              <div class="end-actions" id="endActions">
+                <button class="primary-button" type="button" id="replayButton">데모 다시 보기</button>
+                <button class="secondary-button" type="button" id="resetButton">처음 화면으로</button>
+              </div>
+            </article>
+          </div>
+        </div>
+        </div>
+
+        <div id="jeongjaHome" style="display: none;">
+          <div class="hero-row">
+            <article class="card card-pad">
+              <div class="eyebrow">오늘의 생활 리듬</div>
+              <h1 class="title">박정자 님 · 74세</h1>
+              <div class="score-wrap">
+                <svg class="score-ring" viewBox="0 0 220 220" role="img" aria-label="박정자 리듬 점수">
+                  <circle class="score-bg" cx="110" cy="110" r="86"></circle>
+                  <circle class="score-value" cx="110" cy="110" r="86" style="stroke: var(--orange-500); stroke-dasharray: 540.35; stroke-dashoffset: 172.9;"></circle>
+                  <text class="score-number" x="110" y="106" text-anchor="middle">68</text>
+                  <text class="score-label" x="110" y="134" text-anchor="middle">점</text>
+                </svg>
+              </div>
+              <span class="status-pill status-pill--caution"><span class="status-dot"></span>주의</span>
+              <p class="muted" style="margin-top: 10px;">낮 시간 활동이 이틀째 줄고 있어요.</p>
+            </article>
+
+            <div class="stack">
+              <article class="card card-pad">
+                <div class="eyebrow">오늘의 지표</div>
+                <h2 class="title">기상·주방·외출·취침을 함께 봐요.</h2>
+                <div class="indicator-grid">
+                  <div class="indicator-item"><div class="indicator-label">기상</div><div class="indicator-value">오전 7:20 기상 (조금 늦음)</div></div>
+                  <div class="indicator-item"><div class="indicator-label">주방</div><div class="indicator-value">점심 취사만 확인</div></div>
+                  <div class="indicator-item"><div class="indicator-label">외출</div><div class="indicator-value">오늘 0회 (이틀째)</div></div>
+                  <div class="indicator-item"><div class="indicator-label">취침</div><div class="indicator-value">평소 범위</div></div>
+                </div>
+              </article>
+
+              <article class="card card-pad">
+                <div class="eyebrow">우리 집 리듬 맵</div>
+                <h2 class="title">오늘 어디가 조용했는지 봐요.</h2>
+                <div class="floorplan-svg-wrap">
+                  <svg class="floorplan-svg" viewBox="0 0 400 300" role="img" aria-label="박정자 님 댁 평면도">
+                    <g class="plan-room-group" data-status="caution">
+                      <rect class="plan-room-base" x="8" y="8" width="90" height="70"></rect>
+                      <rect class="plan-status-overlay" x="8" y="8" width="90" height="70"></rect>
+                      <text class="plan-room-label" x="53" y="38">현관</text>
+                      <text class="plan-room-pill-text" x="53" y="58">주의</text>
+                    </g>
+                    <g class="plan-room-group" data-status="caution">
+                      <rect class="plan-room-base" x="98" y="8" width="140" height="70"></rect>
+                      <rect class="plan-status-overlay" x="98" y="8" width="140" height="70"></rect>
+                      <text class="plan-room-label" x="168" y="38">주방</text>
+                      <text class="plan-room-pill-text" x="168" y="58">주의</text>
+                    </g>
+                    <g class="plan-room-group" data-status="normal">
+                      <rect class="plan-room-base" x="238" y="8" width="154" height="70"></rect>
+                      <rect class="plan-status-overlay" x="238" y="8" width="154" height="70"></rect>
+                      <text class="plan-room-label" x="315" y="38">화장실</text>
+                      <text class="plan-room-pill-text" x="315" y="58">정상</text>
+                    </g>
+                    <g class="plan-room-group" data-status="caution">
+                      <rect class="plan-room-base-living" x="8" y="78" width="194" height="214"></rect>
+                      <rect class="plan-status-overlay" x="8" y="78" width="194" height="214"></rect>
+                      <text class="plan-room-label" x="105" y="128">거실</text>
+                      <text class="plan-room-pill-text" x="105" y="148">주의</text>
+                    </g>
+                    <g class="plan-room-group" data-status="normal">
+                      <rect class="plan-room-base" x="202" y="78" width="190" height="214"></rect>
+                      <rect class="plan-status-overlay" x="202" y="78" width="190" height="214"></rect>
+                      <text class="plan-room-label" x="297" y="128">안방</text>
+                      <text class="plan-room-pill-text" x="297" y="148">정상</text>
+                    </g>
+                    <path class="plan-wall-inner" d="M98 8 V78 M238 8 V78 M8 78 H392 M202 78 V292"></path>
+                    <path class="plan-door" d="M40 78 A20 20 0 0 0 60 98"></path>
+                    <path class="plan-door" d="M150 78 A18 18 0 0 0 168 96"></path>
+                    <path class="plan-door" d="M300 78 A18 18 0 0 0 282 96"></path>
+                    <path class="plan-door" d="M202 170 A18 18 0 0 1 220 188"></path>
+                    <rect class="plan-wall" x="8" y="8" width="384" height="284"></rect>
+                  </svg>
+                  <div class="floorplan-legend-list">
+                    <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="1"></rect><circle cx="15" cy="12" r="1"></circle></svg><span class="legend-room-name">현관</span><span class="room-status">이틀째 외출 없음</span></div>
+                    <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="6" rx="1.5"></rect><path d="M4 16v3M20 16v3"></path><path d="M6 10V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v3"></path></svg><span class="legend-room-name">거실</span><span class="room-status">낮 시간 사용 감소</span></div>
+                    <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h8a1 1 0 0 1 1 1v3H6V5a1 1 0 0 1 1-1Z"></path><path d="M6 8h10v2a5 5 0 0 1-5 5a5 5 0 0 1-5-5V8Z"></path><path d="M9 20h4"></path></svg><span class="legend-room-name">화장실</span><span class="room-status">평소처럼 이용 중</span></div>
+                    <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6v-3z"></path><path d="M2 10h2M20 10h2"></path><path d="M8 10V8a4 4 0 0 1 8 0v2"></path></svg><span class="legend-room-name">주방</span><span class="room-status">저녁 취사 미확인</span></div>
+                    <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"></path><path d="M3 14h18"></path><path d="M6 12V9a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3"></path><path d="M14 12V9a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3"></path><path d="M3 18v2M21 18v2"></path></svg><span class="legend-room-name">안방</span><span class="room-status">휴식 중</span></div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="card card-pad" style="border-color: rgba(249, 115, 22, 0.32); background: linear-gradient(135deg, var(--orange-50), var(--white) 88%);">
+                <div class="eyebrow">AI 추천</div>
+                <h2 class="title">잠깐 마을회관에 들러보시는 건 어때요?</h2>
+                <ul class="reason-list">
+                  <li class="reason-item"><span class="reason-mark">1</span><span>이틀째 낮 시간 움직임이 줄었어요</span></li>
+                  <li class="reason-item"><span class="reason-mark">2</span><span>최근 혼자 계신 시간이 길어지셨어요</span></li>
+                  <li class="reason-item"><span class="reason-mark">3</span><span>마침 이번 주 마을회관에서 다과 모임이 있어요</span></li>
+                </ul>
+                <div class="info-box">
+                  <div class="info-row"><span>추천 모임</span><strong>마을회관 다과 모임</strong></div>
+                  <div class="info-row"><span>시간</span><strong>오늘 오후 3시</strong></div>
+                  <div class="info-row"><span>거리</span><strong>도보 5분</strong></div>
+                  <div class="info-row"><span>참여 인원</span><strong>현재 6명 참여</strong></div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div id="minhoHome" style="display: none;">
+          <div class="hero-row">
+            <article class="card card-pad">
+              <div class="eyebrow">오늘의 생활 리듬</div>
+              <h1 class="title">최민호 님 · 81세</h1>
+              <div class="score-wrap">
+                <svg class="score-ring" viewBox="0 0 220 220" role="img" aria-label="최민호 리듬 점수">
+                  <circle class="score-bg" cx="110" cy="110" r="86"></circle>
+                  <circle class="score-value" cx="110" cy="110" r="86" style="stroke: var(--warn-600); stroke-dasharray: 540.35; stroke-dashoffset: 291.8;"></circle>
+                  <text class="score-number" x="110" y="106" text-anchor="middle">46</text>
+                  <text class="score-label" x="110" y="134" text-anchor="middle">점</text>
+                </svg>
+              </div>
+              <span class="status-pill status-pill--warn"><span class="status-dot"></span>경고</span>
+              <p class="muted" style="margin-top: 10px;">닷새째 활동이 크게 줄어 함께 확인이 필요해요.</p>
+            </article>
+
+            <div class="stack">
+              <article class="card card-pad">
+                <div class="eyebrow">오늘의 지표</div>
+                <h2 class="title">기상·주방·외출·취침을 함께 봐요.</h2>
+                <div class="indicator-grid">
+                  <div class="indicator-item"><div class="indicator-label">기상</div><div class="indicator-value">기상 시간 확인 어려움</div></div>
+                  <div class="indicator-item"><div class="indicator-label">주방</div><div class="indicator-value">닷새째 취사 기록 없음</div></div>
+                  <div class="indicator-item"><div class="indicator-label">외출</div><div class="indicator-value">닷새째 0회</div></div>
+                  <div class="indicator-item"><div class="indicator-label">취침</div><div class="indicator-value">매우 불규칙</div></div>
+                </div>
+              </article>
+
+              <article class="card card-pad">
+                <div class="eyebrow">우리 집 리듬 맵</div>
+                <h2 class="title">오늘 어디가 조용했는지 봐요.</h2>
+                <div class="floorplan-svg-wrap">
+                  <svg class="floorplan-svg" viewBox="0 0 400 300" role="img" aria-label="최민호 님 댁 평면도">
+                    <g class="plan-room-group" data-status="warn">
+                      <rect class="plan-room-base" x="8" y="8" width="90" height="70"></rect>
+                      <rect class="plan-status-overlay" x="8" y="8" width="90" height="70"></rect>
+                      <text class="plan-room-label" x="53" y="38">현관</text>
+                      <text class="plan-room-pill-text" x="53" y="58">경고</text>
+                    </g>
+                    <g class="plan-room-group" data-status="warn">
+                      <rect class="plan-room-base" x="98" y="8" width="140" height="70"></rect>
+                      <rect class="plan-status-overlay" x="98" y="8" width="140" height="70"></rect>
+                      <text class="plan-room-label" x="168" y="38">주방</text>
+                      <text class="plan-room-pill-text" x="168" y="58">경고</text>
+                    </g>
+                    <g class="plan-room-group" data-status="caution">
+                      <rect class="plan-room-base" x="238" y="8" width="154" height="70"></rect>
+                      <rect class="plan-status-overlay" x="238" y="8" width="154" height="70"></rect>
+                      <text class="plan-room-label" x="315" y="38">화장실</text>
+                      <text class="plan-room-pill-text" x="315" y="58">주의</text>
+                    </g>
+                    <g class="plan-room-group" data-status="warn">
+                      <rect class="plan-room-base-living" x="8" y="78" width="194" height="214"></rect>
+                      <rect class="plan-status-overlay" x="8" y="78" width="194" height="214"></rect>
+                      <text class="plan-room-label" x="105" y="128">거실</text>
+                      <text class="plan-room-pill-text" x="105" y="148">경고</text>
+                    </g>
+                    <g class="plan-room-group" data-status="warn">
+                      <rect class="plan-room-base" x="202" y="78" width="190" height="214"></rect>
+                      <rect class="plan-status-overlay" x="202" y="78" width="190" height="214"></rect>
+                      <text class="plan-room-label" x="297" y="128">안방</text>
+                      <text class="plan-room-pill-text" x="297" y="148">경고</text>
+                    </g>
+                    <path class="plan-wall-inner" d="M98 8 V78 M238 8 V78 M8 78 H392 M202 78 V292"></path>
+                    <path class="plan-door" d="M40 78 A20 20 0 0 0 60 98"></path>
+                    <path class="plan-door" d="M150 78 A18 18 0 0 0 168 96"></path>
+                    <path class="plan-door" d="M300 78 A18 18 0 0 0 282 96"></path>
+                    <path class="plan-door" d="M202 170 A18 18 0 0 1 220 188"></path>
+                    <rect class="plan-wall" x="8" y="8" width="384" height="284"></rect>
+                  </svg>
+                  <div class="floorplan-legend-list">
+                    <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="1"></rect><circle cx="15" cy="12" r="1"></circle></svg><span class="legend-room-name">현관</span><span class="room-status">닷새째 이동 없음</span></div>
+                    <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="6" rx="1.5"></rect><path d="M4 16v3M20 16v3"></path><path d="M6 10V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v3"></path></svg><span class="legend-room-name">거실</span><span class="room-status">사용 감지 없음</span></div>
+                    <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h8a1 1 0 0 1 1 1v3H6V5a1 1 0 0 1 1-1Z"></path><path d="M6 8h10v2a5 5 0 0 1-5 5a5 5 0 0 1-5-5V8Z"></path><path d="M9 20h4"></path></svg><span class="legend-room-name">화장실</span><span class="room-status">이용 여부 확인 필요</span></div>
+                    <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6v-3z"></path><path d="M2 10h2M20 10h2"></path><path d="M8 10V8a4 4 0 0 1 8 0v2"></path></svg><span class="legend-room-name">주방</span><span class="room-status">취사 기록 없음</span></div>
+                    <div class="floorplan-legend-row"><svg class="legend-room-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"></path><path d="M3 14h18"></path><path d="M6 12V9a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3"></path><path d="M14 12V9a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3"></path><path d="M3 18v2M21 18v2"></path></svg><span class="legend-room-name">안방</span><span class="room-status">응답 없음</span></div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="card card-pad" style="border-color: var(--warn-border); background: linear-gradient(135deg, var(--warn-50), var(--white) 88%);">
+                <div class="eyebrow">AI 추천</div>
+                <h2 class="title">요양보호사님과 통화 연결을 도와드릴까요?</h2>
+                <ul class="reason-list">
+                  <li class="reason-item"><span class="reason-mark">1</span><span>닷새째 외출과 식사 준비가 없었어요</span></li>
+                  <li class="reason-item"><span class="reason-mark">2</span><span>지난주 말씀하신 어지럼증도 마음에 걸려요</span></li>
+                  <li class="reason-item"><span class="reason-mark">3</span><span>통화로 편하게 안부를 여쭤보고 싶어요</span></li>
+                </ul>
+                <div class="action-row">
+                  <button class="call-button" type="button" id="minhoCallButton">지금 전화 연결하기</button>
+                </div>
+                <p class="camera-note" id="minhoCallNote"></p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="camera-modal" id="cameraModal">
+        <div class="camera-modal-inner">
+          <div class="camera-modal-head">
+            <h3 class="title" style="font-size: 16px;">운동 자세 확인</h3>
+            <button class="camera-close-button" type="button" id="cameraCloseButton">✕</button>
+          </div>
+          <div class="camera-exercise-tabs" id="cameraExerciseTabs">
+            <button class="camera-exercise-tab is-active" type="button" data-camera-exercise="squat">의자 스쿼트</button>
+            <button class="camera-exercise-tab" type="button" data-camera-exercise="stretch">목·어깨 스트레칭</button>
+            <button class="camera-exercise-tab" type="button" data-camera-exercise="walk">제자리 걷기</button>
+          </div>
+          <div class="camera-video-wrap">
+            <video id="cameraVideo" autoplay playsinline muted></video>
+            <div class="camera-overlay" id="cameraOverlay">카메라를 시작해주세요</div>
+          </div>
+          <div class="camera-feedback" id="cameraFeedback"></div>
+          <div class="camera-actions">
+            <button class="primary-button" type="button" id="cameraStartButton">카메라 시작</button>
+            <button class="secondary-button" type="button" id="cameraAnalyzeButton" disabled>자세 분석하기</button>
+          </div>
+          <p class="camera-note">카메라 영상은 이 화면에서만 보여지고 저장되거나 전송되지 않아요. file:// 로 연 경우 브라우저 보안 정책상 카메라가 켜지지 않을 수 있어요 — 그럴 땐 로컬 서버(http://localhost)로 열어보세요.</p>
+        </div>
+      </div>
+
+      <section class="view" id="forecastView" data-view="forecast">
+        <article class="card card-pad">
+          <div class="eyebrow">내일의 리듬 예보</div>
+          <h1 class="title">감지가 아니라, 예보예요.</h1>
+          <div class="forecast-hero">
+            <span class="forecast-icon" id="forecastTomorrowIcon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+            </span>
+            <div>
+              <div class="forecast-score"><span id="forecastTomorrowScore">83</span>점 예상</div>
+              <p class="forecast-text" id="forecastTomorrowText">내일도 평소처럼 안정적인 하루가 예상돼요.</p>
+            </div>
+          </div>
+          <div class="forecast-strip">
+            <div class="forecast-day">
+              <div class="forecast-day-label">오늘</div>
+              <svg class="forecast-day-icon" id="forecastTodayIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+              <div class="forecast-day-score" id="forecastTodayScore">82점</div>
+            </div>
+            <div class="forecast-day">
+              <div class="forecast-day-label">내일</div>
+              <svg class="forecast-day-icon" id="forecastTomorrowStripIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+              <div class="forecast-day-score" id="forecastTomorrowStripScore">83점</div>
+            </div>
+            <div class="forecast-day">
+              <div class="forecast-day-label">모레</div>
+              <svg class="forecast-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+              <div class="forecast-day-score">84점</div>
+            </div>
+            <div class="forecast-day">
+              <div class="forecast-day-label">3일 후</div>
+              <svg class="forecast-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+              <div class="forecast-day-score">84점</div>
+            </div>
+            <div class="forecast-day">
+              <div class="forecast-day-label">4일 후</div>
+              <svg class="forecast-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+              <div class="forecast-day-score">85점</div>
+            </div>
+            <div class="forecast-day">
+              <div class="forecast-day-label">5일 후</div>
+              <svg class="forecast-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+              <div class="forecast-day-score">85점</div>
+            </div>
+            <div class="forecast-day">
+              <div class="forecast-day-label">6일 후</div>
+              <svg class="forecast-day-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+              <div class="forecast-day-score">86점</div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="view" id="meetingView" data-view="meeting">
+        <article class="card card-pad meeting-card">
+          <div class="meeting-head">
+            <div>
+              <div class="eyebrow">이번 주 모임</div>
+              <h1 class="title">함덕 파크골프 초보 모임</h1>
+              <p class="muted" style="margin-top: 8px;">내일 오후 2시 · 집에서 약 12분 거리 · 초보 환영</p>
+            </div>
+            <span class="pill" id="meetingStatus">모집 중</span>
+          </div>
+          <div class="routine-list">
+            <div class="routine-row"><span>신청 인원</span><strong id="meetingParticipants">현재 8명 참여</strong></div>
+            <div class="routine-row"><span>장소</span><strong>함덕 생활체육공원</strong></div>
+            <div class="routine-row"><span>준비물</span><strong>편한 운동화</strong></div>
+          </div>
+          <div class="complete-note" id="meetingCompleteNote">
+            <h2 class="title" style="font-size: 18px;">신청이 완료됐어요.</h2>
+            <p class="muted" style="margin-top: 6px;">모임 당일 오전 9시에 다시 알려드릴게요.</p>
+          </div>
+          <div class="action-row">
+            <button class="primary-button" type="button" id="meetingJoinButton">참여하기</button>
+          </div>
+        </article>
+
+        <article class="card card-pad meeting-card" style="margin-top: 16px;">
+          <div class="eyebrow">다음 주 모임 투표</div>
+          <h2 class="title">어떤 모임이 좋을까요?</h2>
+          <p class="muted" style="margin-top: 8px;">가장 많은 표를 받은 모임이 다음 주 마을회관에서 열려요.</p>
+          <div class="vote-list" id="voteList">
+            <div class="vote-row" data-vote="walk">
+              <div class="vote-info">
+                <div class="vote-name">가벼운 걷기 모임</div>
+                <div class="vote-track"><div class="vote-fill" id="voteFillWalk" style="width: 43%;"></div></div>
+                <div class="vote-count"><span id="voteCountWalk">12</span>표</div>
+              </div>
+              <button class="vote-button" type="button" data-vote-button="walk">투표하기</button>
+            </div>
+            <div class="vote-row" data-vote="stretch">
+              <div class="vote-info">
+                <div class="vote-name">실내 스트레칭 모임</div>
+                <div class="vote-track"><div class="vote-fill" id="voteFillStretch" style="width: 32%;"></div></div>
+                <div class="vote-count"><span id="voteCountStretch">9</span>표</div>
+              </div>
+              <button class="vote-button" type="button" data-vote-button="stretch">투표하기</button>
+            </div>
+            <div class="vote-row" data-vote="stroll">
+              <div class="vote-info">
+                <div class="vote-name">동네 마실 모임</div>
+                <div class="vote-track"><div class="vote-fill" id="voteFillStroll" style="width: 25%;"></div></div>
+                <div class="vote-count"><span id="voteCountStroll">7</span>표</div>
+              </div>
+              <button class="vote-button" type="button" data-vote-button="stroll">투표하기</button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="view" id="familyView" data-view="family">
+        <article class="card card-pad">
+          <div class="eyebrow">가족 안심 카드</div>
+          <h1 class="title">감시가 아니라, 안심을 위한 요약이에요.</h1>
+          <div class="family-summary" id="familySummary">이번 주 순자 님은 잘 지내고 계세요. 외출 1회, 모임 참여 1건, 평균 리듬 점수 80점이에요.</div>
+          <div class="family-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
+            <span>가족에게는 이 요약 카드만 전달돼요. 방문 기록이나 상세 생활 데이터는 순자 님만 확인할 수 있어요.</span>
+          </div>
+        </article>
+
+        <article class="card card-pad" style="margin-top: 16px;">
+          <div class="eyebrow">공유 대상</div>
+          <h2 class="title" style="font-size: 18px;">누구에게 요약을 보낼지 정해요.</h2>
+          <div class="family-list">
+            <div class="family-row">
+              <span class="family-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+              <div class="family-info">
+                <div class="family-name">딸 김민정</div>
+                <div class="family-share-status" id="daughterShareStatus">요약 카드 공유 중</div>
+              </div>
+              <button class="toggle-switch is-on" type="button" id="daughterToggle" data-person="daughter" aria-label="딸 공유 여부"><span class="toggle-knob"></span></button>
+            </div>
+            <div class="family-row">
+              <span class="family-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+              <div class="family-info">
+                <div class="family-name">아들 김민수</div>
+                <div class="family-share-status" id="sonShareStatus">요약 카드 공유 중</div>
+              </div>
+              <button class="toggle-switch is-on" type="button" id="sonToggle" data-person="son" aria-label="아들 공유 여부"><span class="toggle-knob"></span></button>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var BASE_SCORE = 82;
+      var LOW_SCORE = 71;
+      var RECOVERED_SCORE = 79;
+      var RADIUS = 86;
+      var CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+      var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var logoClicks = [];
+      var hashStarted = false;
+
+      var demo = {
+        running: false,
+        finished: false,
+        timers: new Set(),
+        raf: 0,
+        sequence: 0
+      };
+
+      var state = {
+        score: BASE_SCORE,
+        meetingApplied: false,
+        travelMode: false,
+        familyShare: { daughter: true, son: true },
+        votedOption: null,
+        currentPeriod: "evening",
+        wordChainActive: false,
+        wordChainLast: ""
+      };
+
+      var ROOM_SNAPSHOTS = {
+        morning: {
+          entrance: { status: "normal", text: "아직 외출 전이에요" },
+          living: { status: "normal", text: "조용한 아침이에요" },
+          bathroom: { status: "normal", text: "아침 이용 확인" },
+          kitchen: { status: "normal", text: "아침 취사 완료" },
+          bedroom: { status: "normal", text: "기상 완료" }
+        },
+        midday: {
+          entrance: { status: "normal", text: "외출 없음, 평소 범위" },
+          living: { status: "caution", text: "낮 시간 활동이 적어요" },
+          bathroom: { status: "normal", text: "이용 확인" },
+          kitchen: { status: "normal", text: "점심 준비 확인" },
+          bedroom: { status: "caution", text: "낮잠 시간이 다소 길어요" }
+        },
+        evening: {
+          entrance: { status: "normal", text: "저녁 외출 없음, 평소 범위" },
+          living: { status: "caution", text: "TV 시청 시간 감소" },
+          bathroom: { status: "normal", text: "이용 확인" },
+          kitchen: { status: "caution", text: "저녁 취사 미확인" },
+          bedroom: { status: "normal", text: "휴식 중" }
+        }
+      };
+
+      function byId(id) {
+        return document.getElementById(id);
+      }
+
+      function qsa(selector) {
+        return Array.prototype.slice.call(document.querySelectorAll(selector));
+      }
+
+      var refs = {
+        brandButton: byId("brandButton"),
+        travelBadge: byId("travelBadge"),
+        demoProgress: byId("demoProgress"),
+        commandInput: byId("commandInput"),
+        commandSubmit: byId("commandSubmit"),
+        commandResponse: byId("commandResponse"),
+        scoreCircle: byId("scoreCircle"),
+        scoreText: byId("scoreText"),
+        scoreCaption: byId("scoreCaption"),
+        trendBarToday: byId("trendBarToday"),
+        indWake: byId("indWake"),
+        indKitchen: byId("indKitchen"),
+        indOuting: byId("indOuting"),
+        indSleep: byId("indSleep"),
+        periodTabs: byId("periodTabs"),
+        roomEntranceTile: byId("roomEntranceTile"),
+        roomEntrancePill: byId("roomEntrancePill"),
+        roomEntranceStatus: byId("roomEntranceStatus"),
+        roomLivingTile: byId("roomLivingTile"),
+        roomLivingPill: byId("roomLivingPill"),
+        roomLivingStatus: byId("roomLivingStatus"),
+        roomBathroomTile: byId("roomBathroomTile"),
+        roomBathroomPill: byId("roomBathroomPill"),
+        roomBathroomStatus: byId("roomBathroomStatus"),
+        roomKitchenTile: byId("roomKitchenTile"),
+        roomKitchenPill: byId("roomKitchenPill"),
+        roomKitchenStatus: byId("roomKitchenStatus"),
+        roomBedroomTile: byId("roomBedroomTile"),
+        roomBedroomPill: byId("roomBedroomPill"),
+        roomBedroomStatus: byId("roomBedroomStatus"),
+        changeBanner: byId("changeBanner"),
+        coachCard: byId("coachCard"),
+        coachParticipants: byId("coachParticipants"),
+        coachCompleteNote: byId("coachCompleteNote"),
+        joinButton: byId("joinButton"),
+        resultCard: byId("resultCard"),
+        endActions: byId("endActions"),
+        replayButton: byId("replayButton"),
+        resetButton: byId("resetButton"),
+        forecastTomorrowIcon: byId("forecastTomorrowIcon"),
+        forecastTomorrowScore: byId("forecastTomorrowScore"),
+        forecastTomorrowText: byId("forecastTomorrowText"),
+        forecastTodayIcon: byId("forecastTodayIcon"),
+        forecastTodayScore: byId("forecastTodayScore"),
+        forecastTomorrowStripIcon: byId("forecastTomorrowStripIcon"),
+        forecastTomorrowStripScore: byId("forecastTomorrowStripScore"),
+        meetingStatus: byId("meetingStatus"),
+        meetingParticipants: byId("meetingParticipants"),
+        meetingCompleteNote: byId("meetingCompleteNote"),
+        meetingJoinButton: byId("meetingJoinButton"),
+        familySummary: byId("familySummary"),
+        daughterToggle: byId("daughterToggle"),
+        sonToggle: byId("sonToggle"),
+        daughterShareStatus: byId("daughterShareStatus"),
+        sonShareStatus: byId("sonShareStatus"),
+        soonjaHome: byId("soonjaHome"),
+        jeongjaHome: byId("jeongjaHome"),
+        minhoHome: byId("minhoHome"),
+        minhoCallButton: byId("minhoCallButton"),
+        minhoCallNote: byId("minhoCallNote"),
+        cameraModal: byId("cameraModal"),
+        cameraCloseButton: byId("cameraCloseButton"),
+        cameraVideo: byId("cameraVideo"),
+        cameraOverlay: byId("cameraOverlay"),
+        cameraFeedback: byId("cameraFeedback"),
+        cameraStartButton: byId("cameraStartButton"),
+        cameraAnalyzeButton: byId("cameraAnalyzeButton"),
+        openCompanionButton: byId("openCompanionButton"),
+        companionModal: byId("companionModal"),
+        companionCloseButton: byId("companionCloseButton"),
+        companionAvatar: byId("companionAvatar"),
+        companionCaption: byId("companionCaption"),
+        companionSelfVideo: byId("companionSelfVideo"),
+        companionMicButton: byId("companionMicButton"),
+        companionTextInput: byId("companionTextInput"),
+        companionSendButton: byId("companionSendButton"),
+        companionNote: byId("companionNote")
+      };
+
+      function duration(ms) {
+        return reducedMotion ? Math.min(180, Math.max(80, Math.round(ms * 0.12))) : ms;
+      }
+
+      function scrollBehavior() {
+        return reducedMotion ? "auto" : "smooth";
+      }
+
+      function schedule(fn, ms) {
+        var id = window.setTimeout(function () {
+          demo.timers.delete(id);
+          fn();
+        }, duration(ms));
+        demo.timers.add(id);
+        return id;
+      }
+
+      function clearDemoTimers() {
+        demo.timers.forEach(function (id) {
+          window.clearTimeout(id);
+        });
+        demo.timers.clear();
+        if (demo.raf) {
+          window.cancelAnimationFrame(demo.raf);
+          demo.raf = 0;
+        }
+      }
+
+      function setTab(tabName) {
+        qsa("[data-tab]").forEach(function (button) {
+          button.classList.toggle("is-active", button.dataset.tab === tabName);
+        });
+        qsa("[data-view]").forEach(function (view) {
+          view.classList.toggle("is-active", view.dataset.view === tabName);
+        });
+      }
+
+      function setProgress(step) {
+        refs.demoProgress.classList.toggle("is-visible", step > 0);
+        qsa("[data-step]").forEach(function (item) {
+          item.classList.toggle("is-active", item.dataset.step === String(step));
+        });
+      }
+
+      function setScore(value) {
+        state.score = value;
+        var rounded = Math.round(value);
+        refs.scoreText.textContent = String(rounded);
+        refs.scoreCircle.style.strokeDasharray = String(CIRCUMFERENCE);
+        refs.scoreCircle.style.strokeDashoffset = String(CIRCUMFERENCE * (1 - value / 100));
+        refs.scoreCircle.style.stroke = rounded < 76 ? "var(--orange-500)" : "var(--teal-500)";
+        refs.scoreCaption.textContent = rounded < 76
+          ? "저녁 생활 흐름이 평소보다 낮아진 상태예요."
+          : "평소 생활 흐름이 안정적으로 유지되고 있어요.";
+        refs.trendBarToday.style.height = Math.max(8, rounded) + "%";
+        refs.trendBarToday.style.background = rounded < 76 ? "var(--orange-500)" : "var(--teal-600)";
+      }
+
+      function animateScore(from, to, ms, done) {
+        if (demo.raf) {
+          window.cancelAnimationFrame(demo.raf);
+        }
+
+        var started = performance.now();
+        var runTime = duration(ms);
+
+        function ease(t) {
+          return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        }
+
+        function frame(now) {
+          var progress = runTime <= 120 ? 1 : Math.min(1, (now - started) / runTime);
+          setScore(from + (to - from) * ease(progress));
+          if (progress < 1) {
+            demo.raf = window.requestAnimationFrame(frame);
+          } else {
+            demo.raf = 0;
+            setScore(to);
+            if (done) done();
+          }
+        }
+
+        demo.raf = window.requestAnimationFrame(frame);
+      }
+
+      function scrollToElement(element) {
+        if (!element) return;
+        element.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
+      }
+
+      function show(element) {
+        if (element) element.classList.add("is-visible");
+      }
+
+      function hide(element) {
+        if (element) element.classList.remove("is-visible");
+      }
+
+      function setRoom(tile, pill, statusEl, status, text) {
+        tile.dataset.status = status;
+        pill.textContent = status === "caution" ? "주의" : "정상";
+        statusEl.textContent = text;
+      }
+
+      function applyRoomSnapshot(period) {
+        var snapshot = ROOM_SNAPSHOTS[period];
+        if (!snapshot) return;
+        state.currentPeriod = period;
+        qsa("#periodTabs .period-tab").forEach(function (tab) {
+          tab.classList.toggle("is-active", tab.dataset.period === period);
+        });
+        setRoom(refs.roomEntranceTile, refs.roomEntrancePill, refs.roomEntranceStatus, snapshot.entrance.status, snapshot.entrance.text);
+        setRoom(refs.roomLivingTile, refs.roomLivingPill, refs.roomLivingStatus, snapshot.living.status, snapshot.living.text);
+        setRoom(refs.roomBathroomTile, refs.roomBathroomPill, refs.roomBathroomStatus, snapshot.bathroom.status, snapshot.bathroom.text);
+        setRoom(refs.roomKitchenTile, refs.roomKitchenPill, refs.roomKitchenStatus, snapshot.kitchen.status, snapshot.kitchen.text);
+        setRoom(refs.roomBedroomTile, refs.roomBedroomPill, refs.roomBedroomStatus, snapshot.bedroom.status, snapshot.bedroom.text);
+      }
+
+      function setForecast(phase) {
+        var todayScore, tomorrowScore, tomorrowText, cloudy;
+
+        if (phase === "low") {
+          todayScore = 71;
+          tomorrowScore = 73;
+          tomorrowText = "내일도 오후 활동이 다소 적을 것으로 예상돼요. 가벼운 산책을 준비해보세요.";
+          cloudy = true;
+        } else if (phase === "recovered") {
+          todayScore = 79;
+          tomorrowScore = 84;
+          tomorrowText = "최근 활동 참여 덕분에 예보가 다시 맑아졌어요.";
+          cloudy = false;
+        } else {
+          todayScore = 82;
+          tomorrowScore = 83;
+          tomorrowText = "내일도 평소처럼 안정적인 하루가 예상돼요.";
+          cloudy = false;
+        }
+
+        refs.forecastTodayScore.textContent = todayScore + "점";
+        refs.forecastTomorrowScore.textContent = String(tomorrowScore);
+        refs.forecastTomorrowStripScore.textContent = tomorrowScore + "점";
+        refs.forecastTomorrowText.textContent = tomorrowText;
+        refs.forecastTodayIcon.classList.toggle("is-cloudy", cloudy);
+        refs.forecastTomorrowIcon.classList.toggle("is-cloudy", cloudy);
+        refs.forecastTomorrowStripIcon.classList.toggle("is-cloudy", cloudy);
+      }
+
+      function setRoutinePhase(phase) {
+        if (phase === "low") {
+          refs.indWake.textContent = "오전 7:40 기상 (평소보다 늦음)";
+          refs.indKitchen.textContent = "저녁 취사 없음";
+          refs.indOuting.textContent = "오늘 0회 (3일째)";
+          refs.indSleep.textContent = "취침 시간 불규칙";
+          applyRoomSnapshot("evening");
+          setRoom(refs.roomEntranceTile, refs.roomEntrancePill, refs.roomEntranceStatus, "caution", "3일째 외출 기록 없음");
+          setRoom(refs.roomLivingTile, refs.roomLivingPill, refs.roomLivingStatus, "caution", "저녁 사용 크게 감소");
+          setRoom(refs.roomKitchenTile, refs.roomKitchenPill, refs.roomKitchenStatus, "caution", "저녁 취사 없음");
+          setForecast("low");
+          return;
+        }
+
+        if (phase === "recovered") {
+          refs.indWake.textContent = "오전 6:55 기상 (평소 범위)";
+          refs.indKitchen.textContent = "저녁 취사 재개";
+          refs.indOuting.textContent = "오늘 1회";
+          refs.indSleep.textContent = "야간 패턴 회복";
+          applyRoomSnapshot("evening");
+          setRoom(refs.roomEntranceTile, refs.roomEntrancePill, refs.roomEntranceStatus, "normal", "외출 1회 확인");
+          setRoom(refs.roomLivingTile, refs.roomLivingPill, refs.roomLivingStatus, "normal", "TV·조명 평소 회복");
+          setRoom(refs.roomKitchenTile, refs.roomKitchenPill, refs.roomKitchenStatus, "normal", "저녁 취사 재개");
+          setForecast("recovered");
+          return;
+        }
+
+        refs.indWake.textContent = "오전 6:50 기상";
+        refs.indKitchen.textContent = "아침 취사 완료";
+        refs.indOuting.textContent = "오늘 0회";
+        refs.indSleep.textContent = "야간 패턴 정상";
+        applyRoomSnapshot(state.currentPeriod || "evening");
+        setForecast("normal");
+      }
+
+      function setMeetingApplied(applied) {
+        state.meetingApplied = applied;
+        refs.coachParticipants.textContent = applied ? "현재 9명 참여" : "현재 8명 참여";
+        refs.meetingParticipants.textContent = applied ? "현재 9명 참여" : "현재 8명 참여";
+        refs.meetingStatus.textContent = applied ? "신청 완료" : "모집 중";
+        refs.joinButton.textContent = applied ? "✓ 신청 완료" : "참여하기";
+        refs.meetingJoinButton.textContent = applied ? "✓ 신청 완료" : "참여하기";
+        refs.joinButton.disabled = applied;
+        refs.meetingJoinButton.disabled = applied;
+        refs.joinButton.classList.remove("join-pulse", "pressing");
+        refs.coachCompleteNote.classList.toggle("is-visible", applied);
+        refs.meetingCompleteNote.classList.toggle("is-visible", applied);
+      }
+
+      function applyMeetingFromUser() {
+        if (demo.running || state.meetingApplied) return;
+        setMeetingApplied(true);
+      }
+
+      function setFamilySummary(phase) {
+        if (phase === "recovered") {
+          refs.familySummary.textContent = "이번 주 순자 님은 추천 활동에 참여하신 뒤 생활 리듬이 다시 좋아지셨어요. 외출 1회, 모임 참여 1건, 리듬 점수 8점 회복.";
+        } else if (phase === "low") {
+          refs.familySummary.textContent = "이번 주 순자 님의 저녁 활동이 평소보다 조금 줄었어요. AI가 가벼운 산책과 모임을 추천드렸어요.";
+        } else {
+          refs.familySummary.textContent = "이번 주 순자 님은 잘 지내고 계세요. 외출 1회, 모임 참여 1건, 평균 리듬 점수 80점이에요.";
+        }
+      }
+
+      function setFamilyShare(person, enabled) {
+        state.familyShare[person] = enabled;
+        var toggle = person === "daughter" ? refs.daughterToggle : refs.sonToggle;
+        var statusEl = person === "daughter" ? refs.daughterShareStatus : refs.sonShareStatus;
+        toggle.classList.toggle("is-on", enabled);
+        statusEl.textContent = enabled ? "요약 카드 공유 중" : "공유하지 않음";
+      }
+
+      function setTravelMode(enabled) {
+        state.travelMode = enabled;
+        refs.travelBadge.classList.toggle("is-visible", enabled);
+      }
+
+      function respond(text) {
+        refs.commandResponse.textContent = text;
+        refs.commandResponse.classList.add("is-visible");
+      }
+
+      var PERSONA_HOME_IDS = { soonja: "soonjaHome", jeongja: "jeongjaHome", minho: "minhoHome" };
+
+      function switchPersonaHome(personaId) {
+        qsa("#personaSwitch .persona-chip").forEach(function (chip) {
+          chip.classList.toggle("is-active", chip.dataset.persona === personaId);
+        });
+        Object.keys(PERSONA_HOME_IDS).forEach(function (key) {
+          var panel = byId(PERSONA_HOME_IDS[key]);
+          if (panel) panel.style.display = key === personaId ? "" : "none";
+        });
+      }
+
+      function connectMinhoCall() {
+        if (refs.minhoCallButton.disabled) return;
+        refs.minhoCallButton.disabled = true;
+        refs.minhoCallButton.textContent = "연결 중...";
+        refs.minhoCallNote.textContent = "";
+        window.setTimeout(function () {
+          refs.minhoCallButton.textContent = "✓ 연결됐어요";
+          refs.minhoCallNote.textContent = "요양보호사님과 통화가 연결됐어요. (데모 화면입니다)";
+        }, 1400);
+      }
+
+      var cameraStream = null;
+      var cameraExercise = "squat";
+
+      var CAMERA_FEEDBACK = {
+        squat: [
+          "좋아요! 무릎이 발끝보다 앞으로 나가지 않았어요.",
+          "등을 조금 더 펴시면 더 안전해요.",
+          "속도가 적당해요, 이대로 몇 번 더 해볼까요?"
+        ],
+        stretch: [
+          "어깨 힘이 잘 빠져 있어요, 좋아요!",
+          "목을 조금 더 천천히 돌려보세요.",
+          "호흡과 함께 하시면 더 편안해요."
+        ],
+        walk: [
+          "보폭이 편안해 보여요.",
+          "팔도 자연스럽게 흔들어보세요.",
+          "속도가 딱 좋아요!"
+        ]
+      };
+
+      function setCameraExerciseTab(exercise) {
+        cameraExercise = exercise;
+        qsa("#cameraExerciseTabs .camera-exercise-tab").forEach(function (tab) {
+          tab.classList.toggle("is-active", tab.dataset.cameraExercise === exercise);
+        });
+        refs.cameraFeedback.textContent = "";
+      }
+
+      function openCameraModal(exercise) {
+        setCameraExerciseTab(exercise || "squat");
+        refs.cameraModal.classList.add("is-visible");
+      }
+
+      function closeCameraModal() {
+        refs.cameraModal.classList.remove("is-visible");
+        stopCamera();
+      }
+
+      function startCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          refs.cameraOverlay.textContent = "이 브라우저에서는 카메라를 사용할 수 없어요.";
+          return;
+        }
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(function (stream) {
+          cameraStream = stream;
+          refs.cameraVideo.srcObject = stream;
+          refs.cameraOverlay.style.display = "none";
+          refs.cameraAnalyzeButton.disabled = false;
+        }).catch(function () {
+          refs.cameraOverlay.textContent = "카메라 권한이 필요해요. file:// 로 열었다면 http://localhost 로 다시 열어보세요.";
+        });
+      }
+
+      function stopCamera() {
+        if (cameraStream) {
+          cameraStream.getTracks().forEach(function (track) {
+            track.stop();
+          });
+          cameraStream = null;
+        }
+        refs.cameraVideo.srcObject = null;
+        refs.cameraOverlay.style.display = "flex";
+        refs.cameraOverlay.textContent = "카메라를 시작해주세요";
+        refs.cameraAnalyzeButton.disabled = true;
+        refs.cameraFeedback.textContent = "";
+      }
+
+      function analyzePosture() {
+        refs.cameraFeedback.textContent = "분석 중이에요...";
+        window.setTimeout(function () {
+          var pool = CAMERA_FEEDBACK[cameraExercise] || CAMERA_FEEDBACK.squat;
+          var pick = pool[Math.floor(Math.random() * pool.length)];
+          refs.cameraFeedback.textContent = "✓ " + pick;
+        }, 1600);
+      }
+
+      var companionStream = null;
+      var companionRecognition = null;
+      var companionListening = false;
+      var CompanionSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      var COMPANION_GREETING = "안녕하세요, 순자 님! 오늘 기분은 어떠세요?";
+
+      var COMPANION_SMALLTALK = [
+        { test: /(안녕|반가워)/, reply: ["안녕하세요! 오늘도 만나서 반가워요.", "안녕하세요 순자 님, 얼굴 보니 좋네요!"] },
+        { test: /(오늘\s*날씨|날씨\s*어때|날씨\s*좋)/, reply: null, handler: replyWeather },
+        { test: /(더워|추워)/, reply: ["요즘 날씨 변화가 있으니 외출하실 땐 겉옷 하나 챙기세요.", "일교차가 있으니 물 자주 드시고요."] },
+        { test: /(오늘\s*뭐\s*할까|오늘\s*뭐\s*하지|심심한데\s*뭐)/, reply: ["오늘은 가벼운 산책이나 스트레칭 어떠세요? 이번 주 모임에 참여해보시는 것도 좋아요.", "날이 좋으면 잠깐 마당이라도 걸어보시고, 저랑 끝말잇기 한 판 하는 것도 좋아요!"] },
+        { test: /(운동\s*추천|운동\s*뭐|운동.*좋을까)/, reply: ["의자 스쿼트 10회나 목·어깨 스트레칭 어떠세요? 홈 화면에서 카메라로 자세도 봐드릴 수 있어요.", "제자리 걷기 3분부터 가볍게 시작해보는 건 어때요?"] },
+        { test: /(밥|식사).*(드셨|먹었)/, reply: ["식사는 꼭 챙겨 드셨으면 좋겠어요. 오늘 뭘 드셨어요?", "맛있게 드셨길 바라요. 오늘 반찬은 뭐였어요?"] },
+        { test: /(자식|아들|딸).*(보고\s*싶|그립)/, reply: "가족 생각이 나실 땐 가족 탭에서 안부 요약을 보내보는 것도 좋아요." },
+        { test: /(고마워|고맙|감사)/, reply: ["저도 순자 님과 이야기하니 좋아요. 언제든 불러주세요.", "그렇게 말씀해주시니 저도 기뻐요!"] },
+        { test: /(심심|외로)/, reply: ["저랑 이렇게 얘기하는 것도 좋지만, 이번 주 모임에 나가보시는 것도 추천드려요.", "심심하실 땐 끝말잇기 한 판 어때요? '끝말잇기 할까'라고 말해보세요."] },
+        { test: /(잘\s*자|자야|졸려)/, reply: "네, 오늘 하루도 고생 많으셨어요. 편안하게 주무세요." },
+        { test: /(고민|걱정)/, reply: ["무슨 고민이신지 편하게 말씀해보세요. 제가 잘 들어드릴게요.", "너무 걱정 마세요, 순자 님은 잘 하고 계세요. 어떤 게 마음에 걸리세요?"] },
+        { test: /(돈|생활비).*(걱정|고민|힘들)/, reply: "생활비 고민은 정말 마음이 무거우시죠. 복지사님과 상담해보시는 것도 도움이 될 수 있어요." },
+        { test: /(무릎|허리|어지러).*(아프|안\s*좋)/, reply: "많이 불편하시겠어요. 계속 아프시면 가족이나 요양보호사님께 꼭 알려드릴게요." },
+        { test: /(건강).*(어때|괜찮)/, reply: "건강이 제일이죠. 요즘 몸 상태는 어떠세요? 불편한 곳 있으면 말씀해주세요." },
+        { test: /(너는\s*누구|넌\s*누구|이름이\s*뭐)/, reply: "저는 순자 님의 이야기 상대, 라이프리듬의 AI 말동무 미소예요. 편하게 말씀 걸어주세요!" },
+        { test: /(몇\s*살|나이가)/, reply: "저는 나이가 없어요! 순자 님과 이야기하는 게 제일 좋아요." },
+        { test: /(뭐\s*해|뭐하고\s*있어)/, reply: "순자 님과 이야기할 준비를 하고 있었어요! 오늘 하루는 어떠셨어요?" }
+      ];
+
+      var WORD_CHAIN_DICT = {
+        "사": "사과", "과": "과일", "일": "일기", "기": "기차", "차": "차표",
+        "표": "표범", "범": "범인", "인": "인사", "나": "나무", "무": "무지개",
+        "개": "개미", "미": "미소", "소": "소나기", "라": "라면", "면": "면허",
+        "허": "허리띠", "띠": "띠앗", "구": "구름", "바": "바다", "다": "다리미",
+        "미": "미소", "하": "하늘", "늘": "늘봄", "가": "가족", "족": "족발",
+        "발": "발자국", "국": "국수", "수": "수박"
+      };
+
+      var WORD_CHAIN_STARTERS = ["사과", "나무", "구름", "바다", "하늘", "가족"];
+
+      function pickReply(reply) {
+        if (Array.isArray(reply)) {
+          return reply[Math.floor(Math.random() * reply.length)];
+        }
+        return reply;
+      }
+
+      function replyWeather() {
+        var cloudy = refs.forecastTodayIcon.classList.contains("is-cloudy");
+        return cloudy
+          ? "오늘은 조금 흐리고 쌀쌀해요. 실내에서 가볍게 몸을 풀어보는 것도 좋아요."
+          : "오늘은 맑고 선선해서 산책하기 딱 좋은 날씨예요.";
+      }
+
+      function startWordChain() {
+        var starter = WORD_CHAIN_STARTERS[Math.floor(Math.random() * WORD_CHAIN_STARTERS.length)];
+        state.wordChainActive = true;
+        state.wordChainLast = starter;
+        speak("좋아요! 제가 먼저 할게요 — " + starter + "! 이제 '" + starter.slice(-1) + "'로 시작하는 단어를 말씀해주세요.");
+      }
+
+      function endWordChain(message) {
+        state.wordChainActive = false;
+        state.wordChainLast = "";
+        speak(message);
+      }
+
+      function handleWordChainTurn(word) {
+        var needed = state.wordChainLast.slice(-1);
+        var firstChar = word.charAt(0);
+        if (firstChar !== needed) {
+          speak("'" + needed + "'로 시작하는 단어여야 해요! 다시 한번 말씀해주세요.");
+          return;
+        }
+
+        var nextChar = word.slice(-1);
+        var nextWord = WORD_CHAIN_DICT[nextChar];
+        if (!nextWord || nextWord === state.wordChainLast) {
+          endWordChain("우와, 제가 아는 단어 중엔 없어요! 순자 님이 이기셨어요. 다음에 또 해요!");
+          return;
+        }
+
+        state.wordChainLast = nextWord;
+        speak(nextWord + "! 그럼 이번엔 '" + nextWord.slice(-1) + "'로 시작하는 단어예요.");
+      }
+
+      function speak(text) {
+        refs.companionCaption.textContent = text;
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        var utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "ko-KR";
+        utter.rate = 0.95;
+        refs.companionAvatar.classList.add("is-talking");
+        utter.onend = function () {
+          refs.companionAvatar.classList.remove("is-talking");
+        };
+        window.speechSynthesis.speak(utter);
+      }
+
+      function companionReply(userText) {
+        var text = (userText || "").trim();
+        if (!text) return;
+
+        if (state.wordChainActive && /(그만|종료|그만할래|그만하자)/.test(text)) {
+          endWordChain("재밌었어요! 다음에 또 끝말잇기 해요.");
+          return;
+        }
+
+        if (state.wordChainActive) {
+          handleWordChainTurn(text);
+          return;
+        }
+
+        if (/끝말잇기/.test(text) && /(할까|하자|하고\s*싶|해요|고고|시작)/.test(text)) {
+          startWordChain();
+          return;
+        }
+
+        for (var i = 0; i < COMPANION_SMALLTALK.length; i++) {
+          if (COMPANION_SMALLTALK[i].test.test(text)) {
+            var entry = COMPANION_SMALLTALK[i];
+            speak(entry.handler ? entry.handler() : pickReply(entry.reply));
+            return;
+          }
+        }
+
+        if (/여행/.test(text) && /(켜|시작)/.test(text)) {
+          setTravelMode(true);
+          speak("여행 모드를 켰어요. 편하게 다녀오세요.");
+        } else if (/(컨디션|기분|리듬)/.test(text) && /(어때|어떤지)/.test(text)) {
+          speak("오늘 리듬 점수는 " + Math.round(state.score) + "점이에요. " + refs.scoreCaption.textContent);
+        } else if (/운동/.test(text)) {
+          speak("의자 스쿼트나 가벼운 산책은 어떠세요? 카메라로 자세도 봐드릴 수 있어요.");
+        } else if (/모임/.test(text)) {
+          speak("내일 오후 2시 함덕 파크골프 모임이 있어요. 신청해드릴까요?");
+        } else {
+          speak("그 말씀 잘 들었어요. 조금 더 편하게 얘기해주셔도 괜찮아요. '끝말잇기 할까'처럼 말씀해보셔도 좋아요.");
+        }
+      }
+
+      function startCompanionCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+        navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(function (stream) {
+          companionStream = stream;
+          refs.companionSelfVideo.srcObject = stream;
+        }).catch(function () {
+          refs.companionNote.textContent = "카메라 권한이 없어도 대화는 계속하실 수 있어요.";
+        });
+      }
+
+      function stopCompanionCamera() {
+        if (companionStream) {
+          companionStream.getTracks().forEach(function (track) {
+            track.stop();
+          });
+          companionStream = null;
+        }
+        refs.companionSelfVideo.srcObject = null;
+      }
+
+      function openCompanionModal() {
+        refs.companionModal.classList.add("is-visible");
+        startCompanionCamera();
+        speak(COMPANION_GREETING);
+      }
+
+      function closeCompanionModal() {
+        refs.companionModal.classList.remove("is-visible");
+        stopCompanionCamera();
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        stopCompanionListening();
+      }
+
+      function startCompanionListening() {
+        if (!CompanionSpeechRecognition) {
+          refs.companionNote.textContent = "이 브라우저는 음성 인식을 지원하지 않아요. 아래 입력창을 이용해주세요.";
+          return;
+        }
+        if (companionListening) return;
+        companionRecognition = new CompanionSpeechRecognition();
+        companionRecognition.lang = "ko-KR";
+        companionRecognition.interimResults = false;
+        companionRecognition.maxAlternatives = 1;
+        companionListening = true;
+        refs.companionMicButton.classList.add("is-listening");
+        refs.companionMicButton.textContent = "🎤 듣는 중...";
+
+        companionRecognition.onresult = function (event) {
+          var transcript = event.results[0][0].transcript;
+          refs.companionTextInput.value = transcript;
+          companionReply(transcript);
+        };
+        companionRecognition.onerror = function () {
+          stopCompanionListening();
+        };
+        companionRecognition.onend = function () {
+          stopCompanionListening();
+        };
+        companionRecognition.start();
+      }
+
+      function stopCompanionListening() {
+        companionListening = false;
+        refs.companionMicButton.classList.remove("is-listening");
+        refs.companionMicButton.textContent = "🎤 말하기";
+        if (companionRecognition) {
+          try {
+            companionRecognition.stop();
+          } catch (err) {
+            /* already stopped */
+          }
+        }
+      }
+
+      function handleCommand(raw) {
+        var text = (raw || "").trim();
+        if (!text) return;
+
+        if (/여행/.test(text) && /(꺼|끄|해제|종료)/.test(text)) {
+          setTravelMode(false);
+          respond("여행 모드를 껐어요. 평소처럼 리듬을 살펴볼게요.");
+        } else if (/여행/.test(text) && /(켜|시작|모드)/.test(text)) {
+          setTravelMode(true);
+          respond("여행 모드를 켰어요. 여행 중에는 평소와 다른 흐름이어도 놀라지 않을게요.");
+        } else if (/딸/.test(text) && /(공유하지|하지\s*마|끄|그만)/.test(text)) {
+          setFamilyShare("daughter", false);
+          setTab("family");
+          respond("딸에게는 더 이상 요약 카드를 공유하지 않을게요.");
+        } else if (/아들/.test(text) && /(공유하지|하지\s*마|끄|그만)/.test(text)) {
+          setFamilyShare("son", false);
+          setTab("family");
+          respond("아들에게는 더 이상 요약 카드를 공유하지 않을게요.");
+        } else if (/딸/.test(text) && /(공유해|켜|다시)/.test(text)) {
+          setFamilyShare("daughter", true);
+          setTab("family");
+          respond("딸에게 다시 요약 카드를 공유할게요.");
+        } else if (/아들/.test(text) && /(공유해|켜|다시)/.test(text)) {
+          setFamilyShare("son", true);
+          setTab("family");
+          respond("아들에게 다시 요약 카드를 공유할게요.");
+        } else if (/(컨디션|기분|리듬)/.test(text) && /(어때|어떤지|알려줘)/.test(text)) {
+          setTab("home");
+          switchPersonaHome("soonja");
+          respond("오늘 리듬 점수는 " + Math.round(state.score) + "점이에요. " + refs.scoreCaption.textContent);
+        } else if (/운동/.test(text) && /(추천|뭐|어떤|하면)/.test(text)) {
+          setTab("home");
+          switchPersonaHome("soonja");
+          respond("의자 스쿼트, 목·어깨 스트레칭, 제자리 걷기를 추천드려요. '오늘의 운동 추천' 카드에서 카메라로 자세도 확인해보세요.");
+        } else if (/(모임|일정)/.test(text) && /(있|뭐|언제)/.test(text)) {
+          setTab("meeting");
+          respond("내일 오후 2시 함덕 파크골프 초보 모임이 있어요. 지금 신청하시면 알려드릴게요.");
+        } else if (/예보/.test(text) || (/내일/.test(text) && /어때/.test(text))) {
+          setTab("forecast");
+          respond("내일은 " + refs.forecastTomorrowScore.textContent + "점 정도로 예상돼요. " + refs.forecastTomorrowText.textContent);
+        } else if (/(안녕|반가워)/.test(text)) {
+          respond("안녕하세요, 순자 님! 오늘도 좋은 하루 보내고 계신가요?");
+        } else if (/(고마워|고맙|감사)/.test(text)) {
+          respond("도움이 됐다니 저도 기뻐요. 언제든 편하게 말씀해주세요.");
+        } else if (/(심심|외로)/.test(text)) {
+          setTab("meeting");
+          respond("그러실 때는 이번 주 모임에 참여해보시는 것도 좋아요. 가족에게 안부를 전해드릴까요?");
+        } else if (/(잠이\s*안|못\s*잤)/.test(text)) {
+          respond("잠들기 전 스마트폰 화면은 잠시 멀리 두고, 따뜻한 물 한 잔 어떠세요?");
+        } else if (/(아파|안\s*좋|어지러)/.test(text)) {
+          respond("몸이 편치 않으시면 가족이나 요양보호사님께 알려드릴게요. 괜찮으시면 '가족' 탭에서 전화해보세요.");
+        } else if (/(뭐\s*할\s*수|도움말|기능)/.test(text)) {
+          respond("이런 걸 도와드릴 수 있어요 — 오늘 컨디션, 운동 추천, 모임 일정, 내일 예보, 여행 모드, 가족 공유 설정.");
+        } else {
+          respond("그 말씀은 제가 아직 다 이해하지 못했어요. 대신 이런 건 도와드릴 수 있어요 — 오늘 컨디션, 운동 추천, 모임 일정, 내일 예보, 여행 모드, 가족 공유 설정.");
+        }
+      }
+
+      function castVote(key) {
+        if (state.votedOption) return;
+        state.votedOption = key;
+
+        var counts = { walk: 12, stretch: 9, stroll: 7 };
+        counts[key] += 1;
+        var total = counts.walk + counts.stretch + counts.stroll;
+
+        byId("voteCountWalk").textContent = String(counts.walk);
+        byId("voteCountStretch").textContent = String(counts.stretch);
+        byId("voteCountStroll").textContent = String(counts.stroll);
+        byId("voteFillWalk").style.width = Math.round((counts.walk / total) * 100) + "%";
+        byId("voteFillStretch").style.width = Math.round((counts.stretch / total) * 100) + "%";
+        byId("voteFillStroll").style.width = Math.round((counts.stroll / total) * 100) + "%";
+
+        qsa("[data-vote-button]").forEach(function (button) {
+          button.disabled = true;
+          button.textContent = button.dataset.voteButton === key ? "투표 완료" : "투표하기";
+        });
+        qsa(".vote-row").forEach(function (row) {
+          row.classList.toggle("is-voted", row.dataset.vote === key);
+        });
+      }
+
+      function resetDemo(options) {
+        var keepProgressHidden = options && options.hideProgress;
+        clearDemoTimers();
+        demo.running = false;
+        demo.finished = false;
+        demo.sequence += 1;
+        setScore(BASE_SCORE);
+        setMeetingApplied(false);
+        setRoutinePhase("normal");
+        setFamilySummary("normal");
+        hide(refs.changeBanner);
+        hide(refs.coachCard);
+        hide(refs.resultCard);
+        refs.endActions.classList.remove("is-visible");
+        refs.joinButton.disabled = false;
+        refs.meetingJoinButton.disabled = false;
+        refs.joinButton.classList.remove("join-pulse", "pressing");
+        setTab("home");
+        switchPersonaHome("soonja");
+        setProgress(keepProgressHidden ? 0 : 0);
+        window.scrollTo({ top: 0, behavior: scrollBehavior() });
+      }
+
+      function startDemo() {
+        if (demo.running) return false;
+
+        resetDemo({ hideProgress: true });
+        demo.running = true;
+        demo.finished = false;
+        var sequence = demo.sequence;
+
+        setTab("home");
+        setProgress(1);
+        schedule(function () {
+          if (sequence !== demo.sequence) return;
+          setRoutinePhase("low");
+          setFamilySummary("low");
+          animateScore(BASE_SCORE, LOW_SCORE, 1500);
+          show(refs.changeBanner);
+          schedule(function () {
+            scrollToElement(refs.changeBanner);
+          }, 180);
+        }, 260);
+
+        schedule(function () {
+          if (sequence !== demo.sequence) return;
+          stepTwo(sequence);
+        }, 2800);
+
+        return true;
+      }
+
+      function stepTwo(sequence) {
+        setProgress(2);
+        setTab("home");
+        show(refs.coachCard);
+        refs.joinButton.classList.add("join-pulse");
+        schedule(function () {
+          scrollToElement(refs.joinButton);
+        }, 160);
+        schedule(function () {
+          if (sequence !== demo.sequence) return;
+          stepThree(sequence);
+        }, 2600);
+      }
+
+      function stepThree(sequence) {
+        setProgress(3);
+        refs.joinButton.classList.remove("join-pulse");
+        refs.joinButton.classList.add("pressing");
+        refs.joinButton.disabled = true;
+        schedule(function () {
+          if (sequence !== demo.sequence) return;
+          refs.joinButton.classList.remove("pressing");
+          setMeetingApplied(true);
+          scrollToElement(refs.coachCompleteNote);
+        }, 340);
+        schedule(function () {
+          if (sequence !== demo.sequence) return;
+          stepFour(sequence);
+        }, 2450);
+      }
+
+      function stepFour(sequence) {
+        setProgress(4);
+        setTab("home");
+        setRoutinePhase("recovered");
+        setFamilySummary("recovered");
+        show(refs.resultCard);
+        animateScore(LOW_SCORE, RECOVERED_SCORE, 1500);
+        schedule(function () {
+          if (sequence !== demo.sequence) return;
+          scrollToElement(refs.resultCard);
+        }, 520);
+        schedule(function () {
+          if (sequence !== demo.sequence) return;
+          demo.running = false;
+          demo.finished = true;
+          refs.endActions.classList.add("is-visible");
+          scrollToElement(refs.resultCard);
+        }, 1800);
+      }
+
+      function replayDemo() {
+        resetDemo({ hideProgress: true });
+        schedule(function () {
+          startDemo();
+        }, 1000);
+      }
+
+      function exitDemo() {
+        resetDemo({ hideProgress: true });
+        setProgress(0);
+        if (window.location.hash === "#demo" && window.history && window.history.replaceState) {
+          window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+        }
+      }
+
+      refs.brandButton.addEventListener("click", function () {
+        if (demo.running) return;
+        var now = Date.now();
+        logoClicks = logoClicks.filter(function (time) {
+          return now - time <= 2000;
+        });
+        logoClicks.push(now);
+        if (logoClicks.length >= 5) {
+          logoClicks = [];
+          startDemo();
+        }
+      });
+
+      qsa("[data-tab]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          setTab(button.dataset.tab);
+        });
+      });
+
+      qsa("#periodTabs .period-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          applyRoomSnapshot(tab.dataset.period);
+        });
+      });
+
+      qsa("[data-vote-button]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          castVote(button.dataset.voteButton);
+        });
+      });
+
+      refs.daughterToggle.addEventListener("click", function () {
+        setFamilyShare("daughter", !state.familyShare.daughter);
+      });
+
+      refs.sonToggle.addEventListener("click", function () {
+        setFamilyShare("son", !state.familyShare.son);
+      });
+
+      qsa(".suggestion-chip").forEach(function (chip) {
+        chip.addEventListener("click", function () {
+          refs.commandInput.value = chip.dataset.suggest;
+          handleCommand(chip.dataset.suggest);
+        });
+      });
+
+      refs.commandSubmit.addEventListener("click", function () {
+        handleCommand(refs.commandInput.value);
+      });
+
+      refs.commandInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          handleCommand(refs.commandInput.value);
+        }
+      });
+
+      refs.joinButton.addEventListener("click", applyMeetingFromUser);
+      refs.meetingJoinButton.addEventListener("click", applyMeetingFromUser);
+      refs.replayButton.addEventListener("click", replayDemo);
+      refs.resetButton.addEventListener("click", exitDemo);
+
+      qsa("#personaSwitch .persona-chip").forEach(function (chip) {
+        chip.addEventListener("click", function () {
+          switchPersonaHome(chip.dataset.persona);
+        });
+      });
+
+      refs.minhoCallButton.addEventListener("click", connectMinhoCall);
+
+      qsa("[data-open-camera]").forEach(function (button) {
+        button.addEventListener("click", function () {
+          openCameraModal(button.dataset.openCamera);
+        });
+      });
+
+      qsa("#cameraExerciseTabs .camera-exercise-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          setCameraExerciseTab(tab.dataset.cameraExercise);
+        });
+      });
+
+      refs.cameraCloseButton.addEventListener("click", closeCameraModal);
+      refs.cameraStartButton.addEventListener("click", startCamera);
+      refs.cameraAnalyzeButton.addEventListener("click", analyzePosture);
+      refs.cameraModal.addEventListener("click", function (event) {
+        if (event.target === refs.cameraModal) closeCameraModal();
+      });
+
+      refs.openCompanionButton.addEventListener("click", openCompanionModal);
+      refs.companionCloseButton.addEventListener("click", closeCompanionModal);
+      refs.companionModal.addEventListener("click", function (event) {
+        if (event.target === refs.companionModal) closeCompanionModal();
+      });
+      refs.companionMicButton.addEventListener("click", function () {
+        if (companionListening) {
+          stopCompanionListening();
+        } else {
+          startCompanionListening();
+        }
+      });
+      refs.companionSendButton.addEventListener("click", function () {
+        companionReply(refs.companionTextInput.value);
+        refs.companionTextInput.value = "";
+      });
+      refs.companionTextInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          companionReply(refs.companionTextInput.value);
+          refs.companionTextInput.value = "";
+        }
+      });
+
+      setScore(BASE_SCORE);
+      setRoutinePhase("normal");
+      setFamilySummary("normal");
+
+      window.addEventListener("load", function () {
+        if (window.location.hash === "#demo" && !hashStarted) {
+          hashStarted = true;
+          schedule(function () {
+            startDemo();
+          }, 420);
+        }
+      }, { once: true });
+    })();
+  </script>
+</body>
+</html>
